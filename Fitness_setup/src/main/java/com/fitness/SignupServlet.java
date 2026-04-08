@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import org.mindrot.jbcrypt.BCrypt;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -28,19 +29,22 @@ public class SignupServlet extends HttpServlet {
 
             // 3. Create connection
             Connection con = DriverManager.getConnection(
-                    "jdbc:mysql://localhost:3306/fitness_db",
-                    "root",
-                    ""   // 🔴 replace with your MySQL password
+                "jdbc:mysql://localhost:3306/fitness_db",
+                "root",
+                "1234"   // 🔴 replace with your MySQL password
             );
 
-            // 4. SQL Query
+            // 4. Hash the password before storing
+            String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
+
+            // 5. SQL Query
             PreparedStatement ps = con.prepareStatement(
-                    "INSERT INTO users(username, email, password) VALUES (?, ?, ?)"
+                "INSERT INTO users(username, email, password) VALUES (?, ?, ?)"
             );
 
             ps.setString(1, username);
             ps.setString(2, email);
-            ps.setString(3, password);
+            ps.setString(3, hashedPassword);
 
             // 5. Execute
             int result = ps.executeUpdate();
@@ -48,7 +52,6 @@ public class SignupServlet extends HttpServlet {
             if (result > 0) {
                 // success → redirect to login page
                 response.sendRedirect("index.html");
-                System.out.println(" GO TO login page");
             } else {
                 response.getWriter().println("Signup Failed");
             }

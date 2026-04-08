@@ -1,10 +1,12 @@
 package com.fitness;
 
+
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import org.mindrot.jbcrypt.BCrypt;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -26,30 +28,34 @@ public class LoginServlet extends HttpServlet {
             Class.forName("com.mysql.cj.jdbc.Driver");
 
             Connection con = DriverManager.getConnection(
-                    "jdbc:mysql://localhost:3306/fitness_db",
-                    "root",
-                    ""
+                "jdbc:mysql://localhost:3306/fitness_db",
+                "root",
+                "1234"
             );
 
             PreparedStatement ps = con.prepareStatement(
-                    "SELECT * FROM users WHERE username=? AND password=?"
+                    "SELECT * FROM users WHERE username = ?"
             );
-
             ps.setString(1, username);
-            ps.setString(2, password);
-
             ResultSet rs = ps.executeQuery();
 
-            if (rs.next()) {
-                // ✅ CREATE SESSION
-                HttpSession session = request.getSession();
-                session.setAttribute("username", username);
+            boolean success = false;
+            while (rs.next()) {
+                String storedHash = rs.getString("password");
 
-                // ✅ REDIRECT TO JSP (not HTML)
-                response.sendRedirect("dashboard.jsp");
+                if (BCrypt.checkpw(password, storedHash)) {
+                    // ✅ Password matches
+                    HttpSession session = request.getSession();
+                    session.setAttribute("user_id", rs.getInt("id"));
+                    session.setAttribute("username", rs.getString("username"));
+                    success = true;
+                    response.sendRedirect("dashboard.html");
+                    break;
+                }
+            }
 
-            } else {
-                response.getWriter().println("<h3>Invalid Username or Password</h3>");
+            if (!success) {
+                response.getWriter().println("Invalid Username or Password");
             }
 
             con.close();

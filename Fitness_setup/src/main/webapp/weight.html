@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Weight Tracker</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Your CSS -->
+    <link rel="stylesheet" href="dashboard_style.css">
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4">
+    <a class="navbar-brand" href="dashboard.html">Fitness Tracker</a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarNav">
+
+        <ul class="navbar-nav me-auto">
+            <li class="nav-item">
+                <a class="nav-link" href="dashboard.html">Dashboard</a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="about.html">About</a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="contact.html">Contact Us</a>
+            </li>
+
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle active" href="#" role="button" data-bs-toggle="dropdown">
+                    Features
+                </a>
+
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="calorie.html">Calorie Tracker</a></li>
+                    <li><a class="dropdown-item active" href="weight.html">Weight Tracker</a></li>
+                </ul>
+            </li>
+        </ul>
+
+        <ul class="navbar-nav">
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle d-flex align-items-center"
+                   href="#" role="button" data-bs-toggle="dropdown">
+                    <div class="profile-wrapper">
+                        <i class="bi bi-person-circle"></i>
+                    </div>
+                </a>
+
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li>
+                        <a class="dropdown-item text-danger" href="logout">
+                            <i class="bi bi-power"></i> Logout
+                        </a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+
+    </div>
+</nav>
+
+<!-- MAIN -->
+<div class="container mt-5 mb-5">
+
+    <div class="row g-4">
+
+        <!-- LEFT -->
+        <div class="col-md-4">
+
+            <!-- ADD -->
+            <div class="card p-4 shadow mb-4">
+                <h5 class="text-center mb-3">
+                    <i class="bi bi-plus-circle"></i> Add Weight
+                </h5>
+
+                <form action="addWeight" method="post">
+                    <div class="mb-3">
+                        <label class="mb-2">Enter Weight (kg)</label>
+                        <input type="number" step="0.1" name="weight" class="form-control" required>
+                    </div>
+
+                    <button class="btn btn-primary w-100">
+                        <i class="bi bi-check-circle"></i> Save
+                    </button>
+                </form>
+            </div>
+
+            <!-- HISTORY -->
+            <div class="card p-3 shadow">
+                <h6 class="text-center mb-3">
+                    <i class="bi bi-clock-history"></i> History
+                </h6>
+
+                <div style="max-height: 350px; overflow-y: auto;">
+                    <table class="table text-center">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Weight</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="weightTable"></tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- RIGHT -->
+        <div class="col-md-8">
+
+            <div class="card p-4 shadow h-100">
+                <h4 class="text-center mb-4">
+                    <i class="bi bi-graph-up"></i> Weight Progress
+                </h4>
+
+                <!-- FIXED GRAPH -->
+                <div style="height: 400px;">
+                    <canvas id="weightChart"></canvas>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+let weightChart;
+
+function loadWeightChart() {
+    let canvas = document.getElementById("weightChart");
+    if (!canvas) return;
+
+    fetch("getWeightData")
+        .then(res => res.json())
+        .then(data => {
+
+            let labels = data.map(item => item.date);
+            let weights = data.map(item => item.weight);
+
+            let ctx = canvas.getContext("2d");
+
+            if (weightChart) weightChart.destroy();
+
+            weightChart = new Chart(ctx, {
+                type: "line",
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: "Weight (kg)",
+                        data: weights,
+                        borderColor: "#36a2eb",
+                        backgroundColor: "#36a2eb33",
+                        tension: 0.3,
+                        fill: true,
+                        pointRadius: 5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false, // 🔥 FIX
+                    scales: {
+                        y: {
+                            beginAtZero: false
+                        }
+                    }
+                }
+            });
+        });
+}
+
+function loadWeightTable() {
+    let table = document.getElementById("weightTable");
+    if (!table) return;
+
+    fetch("getWeightHistory")
+        .then(res => res.json())
+        .then(data => {
+
+            table.innerHTML = "";
+
+            data.forEach(item => {
+
+                let row = `
+                    <tr>
+                        <td>${item.date}</td>
+
+                        <td>
+                            <span id="text${item.id}">${item.weight}</span>
+                            <input type="number" value="${item.weight}" step="0.1"
+                                   id="input${item.id}" class="form-control d-none">
+                        </td>
+
+                        <td id="actions${item.id}">
+                            <button class="btn btn-warning btn-sm me-2"
+                                onclick="editRow(${item.id})">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+
+                            <button class="btn btn-sm text-danger"
+                                onclick="deleteWeight(${item.id})">
+                                <i class="bi bi-trash3"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+
+                table.innerHTML += row;
+            });
+
+        });
+}
+
+function editRow(id) {
+    document.getElementById("text" + id).classList.add("d-none");
+    document.getElementById("input" + id).classList.remove("d-none");
+
+    document.getElementById("actions" + id).innerHTML = `
+        <button class="btn btn-success btn-sm"
+            onclick="saveRow(${id})">
+            <i class="bi bi-check"></i>
+        </button>
+    `;
+}
+
+function saveRow(id) {
+    let weight = document.getElementById("input" + id).value;
+
+    fetch("updateWeight", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: "id=" + id + "&weight=" + weight
+    })
+    .then(() => {
+        loadWeightTable();
+        loadWeightChart();
+    });
+}
+
+function deleteWeight(id) {
+    fetch("deleteWeight", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: "id=" + id
+    })
+    .then(() => {
+        loadWeightTable();
+        loadWeightChart();
+    });
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+    loadWeightChart();
+    loadWeightTable();
+});
+</script>
+
+</body>
+</html>
