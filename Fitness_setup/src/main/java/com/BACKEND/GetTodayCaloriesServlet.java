@@ -1,5 +1,4 @@
-package com.fitness;
-
+package com.BACKEND;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -7,17 +6,16 @@ import java.sql.*;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 
-@WebServlet("/getWeightData")
-public class GetWeightDataServlet extends HttpServlet {
+@WebServlet("/getTodayCalories")
+public class GetTodayCaloriesServlet extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
 
         HttpSession session = request.getSession();
         Integer userId = (Integer) session.getAttribute("user_id");
-
         if (userId == null) {
-            response.getWriter().print("[]"); // no user logged in, return empty JSON
+            response.getWriter().print("[]"); // no user logged in
             return;
         }
 
@@ -36,8 +34,11 @@ public class GetWeightDataServlet extends HttpServlet {
                 "1234"
             );
 
+            // 🔥 FIXED QUERY
             PreparedStatement ps = con.prepareStatement(
-                "SELECT date, weight FROM weight WHERE user_id=? ORDER BY date"
+                "SELECT id, food, calories, TIME(time) as time " +
+                "FROM calories WHERE user_id=? AND DATE(time)=CURDATE() " +
+                "ORDER BY time DESC"
             );
 
             ps.setInt(1, userId);
@@ -48,8 +49,10 @@ public class GetWeightDataServlet extends HttpServlet {
                 if (!first) json.append(",");
 
                 json.append("{")
-                    .append("\"date\":\"").append(rs.getString("date")).append("\",")
-                    .append("\"weight\":").append(rs.getDouble("weight"))
+                    .append("\"id\":").append(rs.getInt("id")).append(",")
+                    .append("\"food\":\"").append(rs.getString("food")).append("\",")
+                    .append("\"calories\":").append(rs.getInt("calories")).append(",")
+                    .append("\"time\":\"").append(rs.getString("time")).append("\"")
                     .append("}");
 
                 first = false;

@@ -1,4 +1,4 @@
-package com.fitness;
+package com.BACKEND;
 
 
 import java.io.IOException;
@@ -13,18 +13,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession; // ✅ ADD
 
-@WebServlet("/getCurrentWeight")
-public class GetCurrentWeightServlet extends HttpServlet {
+@WebServlet("/getWeightChange")
+public class GetWeightChangeServlet extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
 
         HttpSession session = request.getSession();
-        Integer userId = (Integer) session.getAttribute("user_id"); // ✅ use user_id
-
+        Integer userId = (Integer) session.getAttribute("user_id");
 
         if (userId == null) {
-            response.getWriter().print("--");
+            response.getWriter().print("0"); // user not logged in
             return;
         }
 
@@ -38,18 +37,21 @@ public class GetCurrentWeightServlet extends HttpServlet {
             );
 
             PreparedStatement ps = con.prepareStatement(
-                    "SELECT weight FROM weight WHERE user_id=? ORDER BY date DESC LIMIT 1" // ✅ user_id filter
+                "SELECT weight FROM weight WHERE user_id=? ORDER BY date DESC LIMIT 2"
             );
 
             ps.setInt(1, userId);
 
             ResultSet rs = ps.executeQuery();
 
-            if (rs.next()) {
-                response.getWriter().print(rs.getDouble("weight"));
-            } else {
-                response.getWriter().print("--");
-            }
+            double latest = 0, previous = 0;
+
+            if (rs.next()) latest = rs.getDouble("weight");
+            if (rs.next()) previous = rs.getDouble("weight");
+
+            double change = latest - previous;
+
+            response.getWriter().print(change);
 
             con.close();
 

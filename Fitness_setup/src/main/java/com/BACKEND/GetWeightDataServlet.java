@@ -1,4 +1,4 @@
-package com.fitness;
+package com.BACKEND;
 
 
 import java.io.IOException;
@@ -7,8 +7,8 @@ import java.sql.*;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.*;
 
-@WebServlet("/getWeightHistory")
-public class GetWeightHistoryServlet extends HttpServlet {
+@WebServlet("/getWeightData")
+public class GetWeightDataServlet extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
@@ -17,10 +17,9 @@ public class GetWeightHistoryServlet extends HttpServlet {
         Integer userId = (Integer) session.getAttribute("user_id");
 
         if (userId == null) {
-            response.getWriter().print("[]"); // no logged-in user, return empty JSON
+            response.getWriter().print("[]"); // no user logged in, return empty JSON
             return;
         }
-
 
         response.setContentType("application/json");
         PrintWriter out = response.getWriter();
@@ -37,10 +36,10 @@ public class GetWeightHistoryServlet extends HttpServlet {
                 "1234"
             );
 
-
             PreparedStatement ps = con.prepareStatement(
-                    "SELECT id, date, weight FROM weight WHERE user_id=? ORDER BY date DESC"
+                "SELECT date, weight FROM weight WHERE user_id=? ORDER BY date"
             );
+
             ps.setInt(1, userId);
 
             ResultSet rs = ps.executeQuery();
@@ -49,7 +48,6 @@ public class GetWeightHistoryServlet extends HttpServlet {
                 if (!first) json.append(",");
 
                 json.append("{")
-                    .append("\"id\":").append(rs.getInt("id")).append(",")
                     .append("\"date\":\"").append(rs.getString("date")).append("\",")
                     .append("\"weight\":").append(rs.getDouble("weight"))
                     .append("}");

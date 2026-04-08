@@ -1,4 +1,4 @@
-package com.fitness;
+package com.BACKEND;
 
 import java.io.IOException;
 import java.sql.*;
