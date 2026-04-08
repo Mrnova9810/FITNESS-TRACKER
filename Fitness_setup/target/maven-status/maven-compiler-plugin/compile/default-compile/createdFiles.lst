@@ -1,0 +1,15 @@
+com\fitness\AddCalorieServlet.class
+com\fitness\GetCurrentWeightServlet.class
+com\fitness\GetWeightChangeServlet.class
+com\fitness\GetWeightHistoryServlet.class
+com\fitness\GetTodayCaloriesServlet.class
+com\fitness\SignupServlet.class
+com\fitness\AddWeightServlet.class
+com\fitness\UpdateWeightServlet.class
+com\fitness\GetWeightDataServlet.class
+com\fitness\DeleteCalorieServlet.class
+com\fitness\DeleteWeightServlet.class
+com\fitness\LoginServlet.class
+com\fitness\GetCalorieTrendServlet.class
+com\fitness\GetTotalCaloriesServlet.class
+com\fitness\LogoutServlet.class
