@@ -4,7 +4,9 @@
 <meta charset="UTF-8">
 <title>Dashboard</title>
 
-<!-- Bootstrap -->
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<!-- Bootstrap (ONLY for dropdowns & grid) -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 
@@ -16,50 +18,47 @@
 
 <body>
 
-<!-- NAVBAR -->
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4">
-    <a class="navbar-brand" href="#">Fitness Tracker</a>
+<!-- 🔥 NAVBAR (LANDING STYLE) -->
+<div class="navbar">
 
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-        <span class="navbar-toggler-icon"></span>
-    </button>
+    <div class="logo">
+        <i data-lucide="activity"></i>
+        Fit<span>Track</span>
+    </div>
 
-    <div class="collapse navbar-collapse" id="navbarNav">
+    <div class="nav-buttons">
 
-        <ul class="navbar-nav me-auto">
-            <li class="nav-item"><a class="nav-link active" href="#">Dashboard</a></li>
-            <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
-            <li class="nav-item"><a class="nav-link" href="contact.html">Contact Us</a></li>
+        <a href="#" class="nav-link">Dashboard</a>
+        <a href="about.html" class="nav-link">About</a>
+        <a href="contact.html" class="nav-link">Contact</a>
 
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Features</a>
-                <ul class="dropdown-menu">
-                    <li><a class="dropdown-item" href="calorie.html">Calorie Tracker</a></li>
-                    <li><a class="dropdown-item" href="weight.html">Weight Tracker</a></li>
-                </ul>
-            </li>
-        </ul>
+        <div class="dropdown d-inline-block ms-3">
+            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                Features
+            </a>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="calorie.html">Calorie Tracker</a></li>
+                <li><a class="dropdown-item" href="weight.html">Weight Tracker</a></li>
+            </ul>
+        </div>
 
-        <ul class="navbar-nav">
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" data-bs-toggle="dropdown">
-                    <div class="profile-wrapper">
-                        <i class="bi bi-person-circle"></i>
-                    </div>
-                </a>
+        <div class="dropdown d-inline-block ms-3">
+            <div class="profile-wrapper" data-bs-toggle="dropdown">
+                <i class="bi bi-person-circle"></i>
+            </div>
 
-                <ul class="dropdown-menu dropdown-menu-end">
-                    <li>
-                        <a class="dropdown-item text-danger" href="logout">
-                            <i class="bi bi-power"></i> Logout
-                        </a>
-                    </li>
-                </ul>
-            </li>
-        </ul>
+            <ul class="dropdown-menu dropdown-menu-end">
+                <li>
+                    <a class="dropdown-item text-danger" href="logout">
+                        <i class="bi bi-power"></i> Logout
+                    </a>
+                </li>
+            </ul>
+        </div>
 
     </div>
-</nav>
+
+</div>
 
 <div class="container mt-5 mb-5">
 
@@ -68,28 +67,28 @@
 
         <div class="col-md-3">
             <div class="card p-3 shadow text-center">
-                <h6 class="text-muted">Today's Calories</h6>
+                <h6>Today's Calories</h6>
                 <h3 id="todayCalories">0</h3>
             </div>
         </div>
 
         <div class="col-md-3">
             <div class="card p-3 shadow text-center">
-                <h6 class="text-muted">Remaining</h6>
+                <h6>Remaining</h6>
                 <h3 id="remainingCalories">0</h3>
             </div>
         </div>
 
         <div class="col-md-3">
             <div class="card p-3 shadow text-center">
-                <h6 class="text-muted">Current Weight</h6>
+                <h6>Current Weight</h6>
                 <h3 id="currentWeight">--</h3>
             </div>
         </div>
 
         <div class="col-md-3">
             <div class="card p-3 shadow text-center">
-                <h6 class="text-muted">Weekly Change</h6>
+                <h6>Weekly Change</h6>
                 <h3 id="weightChange">--</h3>
             </div>
         </div>
@@ -136,6 +135,27 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
+
+// 🔥 COUNT-UP ANIMATION
+function animateValue(id, start, end, duration) {
+    let range = end - start;
+    let startTime = null;
+
+    function step(timestamp) {
+        if (!startTime) startTime = timestamp;
+        let progress = timestamp - startTime;
+        let value = Math.min(start + (range * progress / duration), end);
+
+        document.getElementById(id).innerText = Math.floor(value);
+
+        if (progress < duration) {
+            requestAnimationFrame(step);
+        }
+    }
+
+    requestAnimationFrame(step);
+}
+
 // DASHBOARD DATA
 function loadDashboard() {
 
@@ -143,14 +163,19 @@ function loadDashboard() {
         .then(res => res.text())
         .then(data => {
             let total = parseInt(data);
-            document.getElementById("todayCalories").innerText = total;
-            document.getElementById("remainingCalories").innerText = 2200 - total;
+
+            // 🔥 animated numbers
+            animateValue("todayCalories", 0, total, 800);
+            animateValue("remainingCalories", 0, 2200 - total, 800);
         });
 
     fetch("getCurrentWeight")
         .then(res => res.text())
         .then(data => {
-            document.getElementById("currentWeight").innerText = data;
+            let weight = parseFloat(data);
+
+            // smooth weight animation
+            animateValue("currentWeight", 0, weight, 800);
         });
 
     fetch("getWeightChange")
@@ -159,11 +184,13 @@ function loadDashboard() {
             let change = parseFloat(data);
             let el = document.getElementById("weightChange");
 
-            if (change > 0) {
-                el.innerHTML = `<i class="bi bi-arrow-up text-danger"></i> +${change} kg`;
-            } else {
-                el.innerHTML = `<i class="bi bi-arrow-down text-success"></i> ${change} kg`;
-            }
+            setTimeout(() => {
+                if (change > 0) {
+                    el.innerHTML = `<i class="bi bi-arrow-up text-danger"></i> +${change} kg`;
+                } else {
+                    el.innerHTML = `<i class="bi bi-arrow-down text-success"></i> ${change} kg`;
+                }
+            }, 600); // slight delay for animation feel
         });
 }
 
@@ -182,6 +209,10 @@ function loadCalorieTrend() {
 
             if (calorieChart) calorieChart.destroy();
 
+            let gradient = ctx.createLinearGradient(0, 0, 0, 300);
+            gradient.addColorStop(0, "#ff8c42");
+            gradient.addColorStop(1, "rgba(255,140,66,0.2)");
+
             calorieChart = new Chart(ctx, {
                 type: "bar",
                 data: {
@@ -189,12 +220,44 @@ function loadCalorieTrend() {
                     datasets: [{
                         label: "Calories",
                         data: values,
-                        backgroundColor: "#4facfe"
+                        backgroundColor: gradient,
+                        borderRadius: 8,
+                        hoverBackgroundColor: "#ffa366"
                     }]
                 },
                 options: {
                     responsive: true,
-                    maintainAspectRatio: false
+                    maintainAspectRatio: false,
+                    animation: {
+                        duration: 1200,
+                        easing: "easeOutQuart"
+                    },
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: "#ddd",
+                                font: { size: 14 }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: "#2a2a2a",
+                            titleColor: "#fff",
+                            bodyColor: "#ddd",
+                            borderColor: "#ff8c42",
+                            borderWidth: 1,
+                            padding: 10
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: { color: "#aaa" },
+                            grid: { color: "rgba(255,255,255,0.05)" }
+                        },
+                        y: {
+                            ticks: { color: "#aaa" },
+                            grid: { color: "rgba(255,255,255,0.05)" }
+                        }
+                    }
                 }
             });
         });
@@ -212,6 +275,10 @@ function loadWeightTrend() {
 
             if (weightChartDash) weightChartDash.destroy();
 
+            let gradient = ctx.createLinearGradient(0, 0, 0, 300);
+            gradient.addColorStop(0, "rgba(255,140,66,0.4)");
+            gradient.addColorStop(1, "rgba(255,140,66,0)");
+
             weightChartDash = new Chart(ctx, {
                 type: "line",
                 data: {
@@ -219,22 +286,66 @@ function loadWeightTrend() {
                     datasets: [{
                         label: "Weight",
                         data: values,
-                        borderColor: "#36a2eb",
-                        tension: 0.3
+                        borderColor: "#ff8c42",
+                        backgroundColor: gradient,
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: "#ff8c42",
+                        pointBorderColor: "#fff",
+                        pointRadius: 5,
+                        pointHoverRadius: 7
                     }]
                 },
                 options: {
                     responsive: true,
-                    maintainAspectRatio: false
+                    maintainAspectRatio: false,
+                    animation: {
+                        duration: 1200,
+                        easing: "easeOutQuart"
+                    },
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: "#ddd",
+                                font: { size: 14 }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: "#2a2a2a",
+                            titleColor: "#fff",
+                            bodyColor: "#ddd",
+                            borderColor: "#ff8c42",
+                            borderWidth: 1,
+                            padding: 10
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: { color: "#aaa" },
+                            grid: { color: "rgba(255,255,255,0.05)" }
+                        },
+                        y: {
+                            ticks: { color: "#aaa" },
+                            grid: { color: "rgba(255,255,255,0.05)" }
+                        }
+                    }
                 }
             });
         });
 }
 
-// 🔥 CLEAN INSIGHTS
+// 🔥 CLEAN INSIGHTS (WITH DELAYED ENTRY)
 function loadInsights() {
 
     let insights = [];
+    let loaded = 0;
+
+    function checkDone() {
+        loaded++;
+        if (loaded === 2) {
+            updateInsights(insights);
+        }
+    }
 
     fetch("getTotalCalories")
         .then(res => res.text())
@@ -250,7 +361,7 @@ function loadInsights() {
                 insights.push(`<i class="bi bi-info-circle text-primary"></i> Can consume more calories`);
             }
 
-            updateInsights(insights);
+            checkDone(); // ✅ fixed
         });
 
     fetch("getWeightChange")
@@ -267,7 +378,7 @@ function loadInsights() {
                 insights.push(`<i class="bi bi-dash-circle text-secondary"></i> Weight stable`);
             }
 
-            updateInsights(insights);
+            checkDone(); // ✅ fixed
         });
 }
 
@@ -275,8 +386,10 @@ function updateInsights(insights) {
     let ul = document.getElementById("insightsList");
     ul.innerHTML = "";
 
-    insights.forEach(i => {
-        ul.innerHTML += `<li class="mb-2 d-flex align-items-center gap-2">${i}</li>`;
+    insights.forEach((i, index) => {
+        setTimeout(() => {
+            ul.innerHTML += `<li class="mb-2 d-flex align-items-center gap-2">${i}</li>`;
+        }, index * 200); // stagger animation
     });
 }
 
@@ -287,6 +400,10 @@ document.addEventListener("DOMContentLoaded", function () {
     loadWeightTrend();
     loadInsights();
 });
+</script>
+
+<script>
+lucide.createIcons();
 </script>
 
 </body>

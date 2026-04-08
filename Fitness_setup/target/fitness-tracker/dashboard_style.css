@@ -1,83 +1,204 @@
 @charset "UTF-8";
 
+/* SAME BODY AS LANDING PAGE */
 body {
-    background: linear-gradient(to right, #4facfe, #00f2fe);
-    margin: 0;
-    padding: 0;
-    font-family: Arial, sans-serif;
+    background-color: #1c1c1c;
+    color: #f5f5f5;
+    font-family: 'Segoe UI', sans-serif;
+
+    background-image:
+        radial-gradient(circle at 20% 30%, rgba(255, 140, 66, 0.20), transparent 45%),
+        radial-gradient(circle at 80% 70%, rgba(255, 140, 66, 0.12), transparent 45%),
+        linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+
+    background-size: auto, auto, 35px 35px, 35px 35px;
 }
 
-/* Navbar */
+/* 🔥 NAVBAR (EXACT LANDING STYLE) */
 .navbar {
-    background-color: rgba(0, 0, 0, 0.85) !important;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 50px;
+    background: rgba(42, 42, 42, 0.6);
+    backdrop-filter: blur(10px);
 }
 
-/* Dropdown styling */
-.dropdown-menu {
-    border-radius: 10px;
-    padding: 10px;
+/* LOGO */
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 22px;
+    font-weight: bold;
 }
 
-.dropdown-item:hover {
-    background-color: #f1f1f1;
+.logo span {
+    color: #ff8c42;
 }
 
-/* Smooth nav hover */
-.nav-link {
+.logo i {
+    color: #ff8c42;
+}
+
+/* 🔥 NAV BUTTONS (MAIN FIX) */
+.nav-buttons {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+/* NAV LINKS */
+.nav-buttons .nav-link {
+    text-decoration: none;
+    color: #f5f5f5;
+    font-size: 15px;
     transition: 0.3s;
 }
 
-.nav-link:hover {
-    color: #00c9d8 !important;
+.nav-buttons .nav-link:hover {
+    color: #ff8c42;
 }
 
-/* Profile button (ONLY ONE SYSTEM) */
+/* DROPDOWN */
+.dropdown-menu {
+    border-radius: 10px;
+    padding: 10px;
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.1);
+}
+
+.dropdown-item {
+    color: #f5f5f5;
+}
+
+.dropdown-item:hover {
+    background-color: rgba(255,140,66,0.2);
+}
+
+/* PROFILE ICON */
 .profile-wrapper {
     width: 42px;
     height: 42px;
     border-radius: 50%;
-    background-color: #444;
+    background: #2a2a2a;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    transition: 0.3s;
 }
 
 .profile-wrapper i {
     font-size: 22px;
-    color: white;
+    color: #ff8c42;
 }
 
 .profile-wrapper:hover {
-    background-color: #666;
-    transform: scale(1.05);
-    transition: 0.3s;
+    background-color: #333;
+    transform: scale(1.1);
 }
-/* Card improvement */
+
+/* 🔥 CARD ENTRY ANIMATION */
 .card {
-    border-radius: 12px;
+    border-radius: 15px;
+    padding: 20px;
+
+    background: rgba(255,255,255,0.04);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.1);
+
+    color: #f5f5f5;
+    transition: all 0.4s ease;
+
+    opacity: 0;
+    transform: translateY(30px);
+    animation: fadeUp 0.8s ease forwards;
 }
 
-/* Better button feel */
-.btn-primary {
-    background-color: #4facfe;
-    border: none;
+/* Stagger effect */
+.row .col-md-3:nth-child(1) .card { animation-delay: 0.1s; }
+.row .col-md-3:nth-child(2) .card { animation-delay: 0.2s; }
+.row .col-md-3:nth-child(3) .card { animation-delay: 0.3s; }
+.row .col-md-3:nth-child(4) .card { animation-delay: 0.4s; }
+
+.row .col-md-6:nth-child(1) .card { animation-delay: 0.2s; }
+.row .col-md-6:nth-child(2) .card { animation-delay: 0.3s; }
+
+@keyframes fadeUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
-.btn-primary:hover {
-    background-color: #3a8fd8;
+/* 🔥 HOVER GLOW */
+.card:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow:
+        0 10px 30px rgba(255,140,66,0.3),
+        0 0 25px rgba(255,140,66,0.2),
+        0 0 5px rgba(255,140,66,0.4);
+    border: 1px solid rgba(255,140,66,0.4);
 }
-.chart-container {
-    width: 250px;
-    height: 250px;
+
+/* TEXT */
+.card h6 {
+    color: #bbbbbb;
+}
+
+.card h3 {
+    font-weight: bold;
+}
+
+/* 🔥 CHART FADE-IN */
+canvas {
+    background: rgba(255,255,255,0.03);
+    border-radius: 10px;
+    opacity: 0;
+    animation: chartFade 1s ease forwards;
+    animation-delay: 0.5s;
+}
+
+@keyframes chartFade {
+    to {
+        opacity: 1;
+    }
+}
+
+/* INSIGHTS */
+#insightsList li {
+    color: #ddd;
+    opacity: 0;
+    transform: translateX(-10px);
+    animation: slideIn 0.5s ease forwards;
+}
+
+#insightsList li:nth-child(1) { animation-delay: 0.2s; }
+#insightsList li:nth-child(2) { animation-delay: 0.4s; }
+
+@keyframes slideIn {
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+/* OUTER NAVBAR */
+.navbar {
+    width: 100%;
+    background: rgba(42, 42, 42, 0.6);
+    backdrop-filter: blur(10px);
+}
+
+/* INNER CONTAINER (MATCHES DASHBOARD WIDTH) */
+.nav-inner {
+    max-width: 1140px;   /* same as Bootstrap container */
     margin: auto;
-}
-.chart-container {
-    width: 250px;
-    height: 250px;
-    margin: auto;
-}
+    padding: 20px 15px;
 
-.card h4 {
-    font-weight: 600;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
