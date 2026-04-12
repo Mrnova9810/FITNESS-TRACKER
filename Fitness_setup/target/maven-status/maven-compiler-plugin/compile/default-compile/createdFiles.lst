@@ -5,7 +5,10 @@ com\BACKEND\LogoutServlet.class
 com\BACKEND\GetTotalCaloriesServlet.class
 com\BACKEND\DeleteWeightServlet.class
 com\BACKEND\GetCalorieTrendServlet.class
+com\BACKEND\UpdateProfileServlet.class
+com\BACKEND\UploadProfilePicServlet.class
 com\BACKEND\LoginServlet.class
+com\BACKEND\GetProfileServlet.class
 com\BACKEND\AddCalorieServlet.class
 com\BACKEND\GetTodayCaloriesServlet.class
 com\BACKEND\GetCurrentWeightServlet.class

@@ -13,6 +13,12 @@
     <name>Fitness Tracker</name>
 
     <dependencies>
+        <!--Cloud API -->
+                <dependency>
+            <groupId>com.cloudinary</groupId>
+            <artifactId>cloudinary-http44</artifactId>
+            <version>1.39.0</version>
+        </dependency>
 
         <!-- Servlet API -->
         <dependency>

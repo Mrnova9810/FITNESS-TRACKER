@@ -5,8 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="75a8fabe-c04a-4286-b4a1-1fee180d4aab" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/Fitness_setup/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Fitness_setup/.idea/compiler.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Fitness_setup/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/Fitness_setup/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fitness_setup/src/main/java/com/BACKEND/SignupServlet.java" beforeDir="false" afterPath="$PROJECT_DIR$/Fitness_setup/src/main/java/com/BACKEND/SignupServlet.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Fitness_setup/src/main/webapp/landingPage.html" beforeDir="false" afterPath="$PROJECT_DIR$/Fitness_setup/src/main/webapp/landingPage.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -59,7 +60,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
     "deletionFromPopupRequiresConfirmation": "false",
-    "git-widget-placeholder": "main",
+    "git-widget-placeholder": "UI",
     "last_opened_file_path": "C:/Users/Suraj Bhan/OneDrive/Desktop/code/java/Fit_Project/FITNESS-TRACKER",
     "project.structure.last.edited": "Project",
     "project.structure.proportion": "0.21852387",

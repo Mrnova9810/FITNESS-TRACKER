@@ -51,7 +51,7 @@ public class SignupServlet extends HttpServlet {
 
             if (result > 0) {
                 // success → redirect to login page
-                response.sendRedirect("landingPage.html");
+                response.sendRedirect("landingPage.html?login=true");
             } else {
                 response.getWriter().println("Signup Failed");
             }

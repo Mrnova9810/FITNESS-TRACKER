@@ -48,6 +48,7 @@ public class LoginServlet extends HttpServlet {
                     HttpSession session = request.getSession();
                     session.setAttribute("user_id", rs.getInt("id"));
                     session.setAttribute("username", rs.getString("username"));
+                    session.setAttribute("password",rs.getString("password"));
                     success = true;
                     response.sendRedirect("dashboard.html");
                     break;

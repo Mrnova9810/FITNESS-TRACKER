@@ -4,6 +4,7 @@ C:\Users\Suraj Bhan\OneDrive\Desktop\code\java\Fit_Project\FITNESS-TRACKER\Fitne
 C:\Users\Suraj Bhan\OneDrive\Desktop\code\java\Fit_Project\FITNESS-TRACKER\Fitness_setup\src\main\java\com\BACKEND\DeleteWeightServlet.java
 C:\Users\Suraj Bhan\OneDrive\Desktop\code\java\Fit_Project\FITNESS-TRACKER\Fitness_setup\src\main\java\com\BACKEND\GetCalorieTrendServlet.java
 C:\Users\Suraj Bhan\OneDrive\Desktop\code\java\Fit_Project\FITNESS-TRACKER\Fitness_setup\src\main\java\com\BACKEND\GetCurrentWeightServlet.java
+C:\Users\Suraj Bhan\OneDrive\Desktop\code\java\Fit_Project\FITNESS-TRACKER\Fitness_setup\src\main\java\com\BACKEND\GetProfileServlet.java
 C:\Users\Suraj Bhan\OneDrive\Desktop\code\java\Fit_Project\FITNESS-TRACKER\Fitness_setup\src\main\java\com\BACKEND\GetTodayCaloriesServlet.java
 C:\Users\Suraj Bhan\OneDrive\Desktop\code\java\Fit_Project\FITNESS-TRACKER\Fitness_setup\src\main\java\com\BACKEND\GetTotalCaloriesServlet.java
 C:\Users\Suraj Bhan\OneDrive\Desktop\code\java\Fit_Project\FITNESS-TRACKER\Fitness_setup\src\main\java\com\BACKEND\GetWeightChangeServlet.java
@@ -12,4 +13,6 @@ C:\Users\Suraj Bhan\OneDrive\Desktop\code\java\Fit_Project\FITNESS-TRACKER\Fitne
 C:\Users\Suraj Bhan\OneDrive\Desktop\code\java\Fit_Project\FITNESS-TRACKER\Fitness_setup\src\main\java\com\BACKEND\LoginServlet.java
 C:\Users\Suraj Bhan\OneDrive\Desktop\code\java\Fit_Project\FITNESS-TRACKER\Fitness_setup\src\main\java\com\BACKEND\LogoutServlet.java
 C:\Users\Suraj Bhan\OneDrive\Desktop\code\java\Fit_Project\FITNESS-TRACKER\Fitness_setup\src\main\java\com\BACKEND\SignupServlet.java
+C:\Users\Suraj Bhan\OneDrive\Desktop\code\java\Fit_Project\FITNESS-TRACKER\Fitness_setup\src\main\java\com\BACKEND\UpdateProfileServlet.java
 C:\Users\Suraj Bhan\OneDrive\Desktop\code\java\Fit_Project\FITNESS-TRACKER\Fitness_setup\src\main\java\com\BACKEND\UpdateWeightServlet.java
+C:\Users\Suraj Bhan\OneDrive\Desktop\code\java\Fit_Project\FITNESS-TRACKER\Fitness_setup\src\main\java\com\BACKEND\UploadProfilePicServlet.java
