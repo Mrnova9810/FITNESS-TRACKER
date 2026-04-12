@@ -13,7 +13,7 @@
     box-sizing: border-box;
     font-family: 'Segoe UI', sans-serif;
 }
-
+.icon{color: #ff8c42;}
 .login {
     border: 2px solid #ff8c42;
     color: #ff8c42;
@@ -260,19 +260,19 @@ body {
 
 <div class="features">
     <div class="feature-box">
-        <i data-lucide="flame" ></i>
+        <i data-lucide="flame" class="icon"></i>
         <h3>Calorie Tracker</h3>
         <p>Track daily calories easily</p>
     </div>
 
     <div class="feature-box">
-        <i data-lucide="scale"></i>
+        <i data-lucide="scale" class="icon"></i>
         <h3>Weight Logging</h3>
         <p>Monitor your weight progress</p>
     </div>
 
     <div class="feature-box">
-        <i data-lucide="bar-chart-3"></i>
+        <i data-lucide="bar-chart-3" class="icon"></i>
         <h3>Progress Summary</h3>
         <p>Visualize your fitness journey</p>
     </div>
@@ -312,6 +312,18 @@ body {
 </div>
 
 <script>
+
+// 🔥 AUTO LOGIN CHECK (RUN FIRST AND STOP EXECUTION)
+(function () {
+    let match = document.cookie.match(/(^| )user_id=([^;]+)/);
+
+    if (match) {
+    	window.location.replace("autoLogin");
+        return; // 🔥 STOP EVERYTHING
+    }
+})();
+
+
 // typing
 const texts = [
     "Track calories. Build discipline.",
@@ -371,12 +383,12 @@ window.onload = () => {
     showFeatures();
     lucide.createIcons();
 
-    // 🔥 Auto open login after signup
     const params = new URLSearchParams(window.location.search);
     if (params.get("login") === "true") {
         openLogin();
     }
 };
+
 </script>
 
 </body>

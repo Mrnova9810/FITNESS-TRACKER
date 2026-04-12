@@ -3,32 +3,113 @@
 <head>
     <title>Calorie Tracker</title>
 
-    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
 
-    <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 
-    <!-- Your CSS -->
     <link rel="stylesheet" href="dashboard_style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+.table {
+    color: #f5f5f5 !important;
+    background-color: transparent !important;
+}
+.table,
+.table > :not(caption) > * > * {
+    background-color: transparent !important;
+}
+.table thead {
+    background: rgba(255,255,255,0.05) !important;
+}
+.table thead th {
+    color: #bbb !important;
+    border: none !important;
+}
+.table tbody td,
+.table tbody td * {
+    color: #f5f5f5 !important;
+    font-weight: 500;
+}
+.table tbody td {
+    border-top: 1px solid rgba(255,255,255,0.08) !important;
+}
+.table tbody tr:hover {
+    background: rgba(255,140,66,0.08) !important;
+}
+.table .btn,
+.table .btn i {
+    color: #ff8c42 !important;
+}
+.table .btn:hover,
+.table .btn:hover i {
+    color: #ff1a1a !important;
+}
+.form-control {
+    background: rgba(255,255,255,0.05) !important;
+    border: 1px solid rgba(255,255,255,0.1) !important;
+    color: #f5f5f5 !important;
+}
+
+.form-control:focus {
+    border-color: #ff8c42 !important;
+    box-shadow: 0 0 8px rgba(255,140,66,0.3);
+}
+
+.form-control::placeholder {
+    color: #aaa;
+}
+
+.chart-container {
+    position: relative;
+    width: 100%;
+    height: 350px;
+}
+
+.chart-container canvas {
+    width: 100% !important;
+    height: 100% !important;
+}
+/* 🔥 NEW ROW ANIMATION */
+.row-enter {
+    opacity: 0;
+    transform: translateY(10px);
+    animation: rowFadeIn 0.4s ease forwards;
+}
+
+@keyframes rowFadeIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 🔥 DELETE ANIMATION */
+.row-exit {
+    opacity: 1;
+    transform: translateX(0);
+    animation: rowFadeOut 0.3s ease forwards;
+}
+
+@keyframes rowFadeOut {
+    to {
+        opacity: 0;
+        transform: translateX(40px);
+    }
+}
+</style>
 </head>
 
 <body>
 
-<!-- 🔥 NAVBAR -->
 <div class="navbar">
-
     <div class="logo">
         <i data-lucide="activity"></i>
         Fit<span>Track</span>
     </div>
 
     <div class="nav-buttons">
-
         <a href="dashboard.html" class="nav-link">Dashboard</a>
         <a href="about.html" class="nav-link">About</a>
         <a href="contact.html" class="nav-link">Contact</a>
@@ -56,46 +137,41 @@
                 </li>
             </ul>
         </div>
-
     </div>
-
 </div>
 
-<!-- MAIN CONTENT -->
 <div class="container mt-5 mb-5">
 
     <div class="row g-4">
 
         <div class="col-md-6">
-            <div class="card shadow-lg p-4 h-100">
+            <div class="card shadow p-4 h-100">
 
                 <h4 class="text-center mb-4">
                     <i class="bi bi-plus-circle"></i> Add Entry
                 </h4>
 
                 <form id="calorieForm">
-
                     <div class="mb-3">
                         <label class="form-label">Food Item</label>
-                        <input type="text" name="food" class="form-control" required>
+                        <input type="text" name="food" class="form-control" required pattern="[A-Za-z\s]+" title="Only letters allowed">
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label">Calories</label>
-                        <input type="number" name="calories" class="form-control" required>
+                        <input type="number" name="calories" class="form-control" required min="1">
                     </div>
 
                     <button class="btn btn-primary w-100 mt-2">
                         <i class="bi bi-plus-circle"></i> Add Entry
                     </button>
-
                 </form>
 
                 <div class="card p-3 mt-4 text-center">
-                    <h6 class="text-muted">Daily Intake</h6>
-                    <h2 id="totalCalories">0 / 2200 kcal</h2>
+                    <h6 style="color:#aaa;">Daily Intake</h6>
+                    <h2 id="totalCalories">0 / -- kcal</h2>
                     <p id="warningText" class="text-danger fw-bold mt-2" style="display:none;">
-                        &#9888; Limit Exceeded!
+                        <i class="bi bi-exclamation-triangle-fill"></i> Limit Exceeded!
                     </p>
                 </div>
 
@@ -103,8 +179,7 @@
         </div>
 
         <div class="col-md-6">
-            <div class="card shadow-lg p-4 h-100 text-center">
-
+            <div class="card shadow p-4 h-100 text-center">
                 <h4 class="mb-4">
                     <i class="bi bi-fire"></i> Calorie Distribution
                 </h4>
@@ -120,13 +195,10 @@
 
     <div class="row mt-4">
         <div class="col-12">
-
             <div class="card p-3 shadow">
-
                 <h5 class="text-center mb-3">
                     <i class="bi bi-clock-history"></i> Today's Entries
                 </h5>
-
                 <table class="table">
                     <thead>
                         <tr>
@@ -136,39 +208,66 @@
                             <th>Delete</th>
                         </tr>
                     </thead>
-
                     <tbody id="calorieTable"></tbody>
                 </table>
-
             </div>
-
         </div>
     </div>
 
 </div>
 
-<!-- JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
 let chart;
+let previousTotal = 0;
+let targetCalories = 2200;
+
+function loadTargetCalories() {
+    fetch("getCalorieTarget")
+        .then(res => res.text())
+        .then(data => {
+            targetCalories = parseInt(data);
+            loadTotalCalories();
+        });
+}
+
+function animateValue(id, start, end, duration) {
+    let range = end - start;
+    let startTime = null;
+
+    function step(timestamp) {
+        if (!startTime) startTime = timestamp;
+        let progress = timestamp - startTime;
+        let value = start + (range * (progress / duration));
+
+        if (progress >= duration) value = end;
+
+        document.getElementById(id).innerText =
+            Math.floor(value) + " / " + targetCalories + " kcal";
+
+        if (progress < duration) requestAnimationFrame(step);
+    }
+
+    requestAnimationFrame(step);
+}
 
 function loadTotalCalories() {
     fetch("getTotalCalories")
-        .then(response => response.text())
+        .then(res => res.text())
         .then(data => {
             let total = parseInt(data);
 
-            let totalElement = document.getElementById("totalCalories");
+            animateValue("totalCalories", previousTotal, total, 800);
+            previousTotal = total;
+
             let warning = document.getElementById("warningText");
 
-            totalElement.innerText = total + " / 2200 kcal";
-
-            if (total > 2200) {
-                totalElement.style.color = "red";
+            if (total > targetCalories) {
+                document.getElementById("totalCalories").style.color = "red";
                 warning.style.display = "block";
             } else {
-                totalElement.style.color = "#ff8c42";
+                document.getElementById("totalCalories").style.color = "#ff8c42";
                 warning.style.display = "none";
             }
 
@@ -176,32 +275,56 @@ function loadTotalCalories() {
         });
 }
 
+/* 🔥 NEW SMOOTH FILL ANIMATION */
 function updateChart(consumed) {
-    let remaining = 2200 - consumed;
-    if (remaining < 0) remaining = 0;
 
     let ctx = document.getElementById("calorieChart").getContext("2d");
 
-    if (chart) chart.destroy();
+    if (!chart) {
+        chart = new Chart(ctx, {
+            type: "doughnut",
+            data: {
+                labels: ["Consumed", "Remaining"],
+                datasets: [{
+                    data: [0, targetCalories],
+                    backgroundColor: ["#ff8c42", "#2a2a2a"]
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: false
+            }
+        });
+    }
 
-    let colors = consumed > 2200
-        ? ["#ff0000", "#330000"]
-        : ["#ff8c42", "#2a2a2a"];
+    animateChart(consumed);
+}
 
-    chart = new Chart(ctx, {
-        type: "pie",
-        data: {
-            labels: ["Consumed", "Remaining"],
-            datasets: [{
-                data: [consumed, remaining],
-                backgroundColor: colors
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false
+function animateChart(target) {
+
+    let start = 0;
+    let duration = 800;
+    let startTime = null;
+
+    function step(timestamp) {
+
+        if (!startTime) startTime = timestamp;
+        let progress = timestamp - startTime;
+
+        let value = Math.min((progress / duration) * target, target);
+
+        let remaining = Math.max(targetCalories - value, 0);
+
+        chart.data.datasets[0].data = [value, remaining];
+        chart.update();
+
+        if (progress < duration) {
+            requestAnimationFrame(step);
         }
-    });
+    }
+
+    requestAnimationFrame(step);
 }
 
 function loadTable() {
@@ -211,38 +334,55 @@ function loadTable() {
             let table = document.getElementById("calorieTable");
             table.innerHTML = "";
 
-            data.forEach(item => {
+            data.slice().reverse().forEach(item => {
                 let row = `
                     <tr>
                         <td>${item.food}</td>
                         <td>${item.calories}</td>
                         <td>${item.time}</td>
                         <td>
-                            <button onclick="deleteEntry(${item.id})" class="btn btn-sm text-danger">
+                            <button onclick="deleteEntry(event, ${item.id})" class="btn btn-sm">
                                 <i class="bi bi-trash3 fs-5"></i>
                             </button>
                         </td>
                     </tr>
                 `;
-                table.innerHTML = row + table.innerHTML;
+                let temp = document.createElement("tbody");
+                temp.innerHTML = row;
+
+                let newRow = temp.firstElementChild;
+                newRow.classList.add("row-enter");
+
+                table.prepend(newRow);
             });
         });
 }
 
-function deleteEntry(id) {
-    fetch("deleteCalorie", {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: "id=" + id
-    })
-    .then(() => {
-        loadTotalCalories();
-        loadTable();
-    });
+function deleteEntry(event, id) {
+
+    let button = event.currentTarget;
+    let row = button.closest("tr");
+
+    // 🔥 add exit animation
+    row.classList.add("row-exit");
+
+    // wait for animation before deleting
+    setTimeout(() => {
+
+        fetch("deleteCalorie", {
+            method: "POST",
+            headers: {"Content-Type":"application/x-www-form-urlencoded"},
+            body: "id=" + id
+        }).then(() => {
+            loadTotalCalories();
+            loadTable();
+        });
+
+    }, 300);
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-    loadTotalCalories();
+    loadTargetCalories();
     loadTable();
 
     document.getElementById("calorieForm").addEventListener("submit", function (e) {
@@ -253,10 +393,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
         fetch("addCalorie", {
             method: "POST",
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            headers: {"Content-Type":"application/x-www-form-urlencoded"},
             body: "food=" + encodeURIComponent(food) + "&calories=" + encodeURIComponent(calories)
-        })
-        .then(() => {
+        }).then(() => {
             document.getElementById("calorieForm").reset();
             loadTotalCalories();
             loadTable();

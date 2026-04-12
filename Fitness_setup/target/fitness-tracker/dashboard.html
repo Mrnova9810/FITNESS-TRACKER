@@ -6,11 +6,9 @@
 
 <script src="https://unpkg.com/lucide@latest"></script>
 
-<!-- Bootstrap (ONLY for dropdowns & grid) -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 
-<!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <link rel="stylesheet" href="dashboard_style.css">
@@ -18,16 +16,13 @@
 
 <body>
 
-<!-- 🔥 NAVBAR (LANDING STYLE) -->
 <div class="navbar">
-
     <div class="logo">
         <i data-lucide="activity"></i>
         Fit<span>Track</span>
     </div>
 
     <div class="nav-buttons">
-
         <a href="#" class="nav-link">Dashboard</a>
         <a href="about.html" class="nav-link">About</a>
         <a href="contact.html" class="nav-link">Contact</a>
@@ -63,16 +58,12 @@
                 </li>
             </ul>
         </div>
-
     </div>
-
 </div>
 
 <div class="container mt-5 mb-5">
 
-    <!-- TOP CARDS -->
     <div class="row g-4">
-
         <div class="col-md-3">
             <div class="card p-3 shadow text-center">
                 <h6>Today's Calories</h6>
@@ -100,12 +91,9 @@
                 <h3 id="weightChange">--</h3>
             </div>
         </div>
-
     </div>
 
-    <!-- GRAPHS -->
     <div class="row mt-4 g-4">
-
         <div class="col-md-6">
             <div class="card p-4 shadow">
                 <h5 class="text-center mb-3">Calorie Trend</h5>
@@ -123,10 +111,8 @@
                 </div>
             </div>
         </div>
-
     </div>
 
-    <!-- INSIGHTS -->
     <div class="row mt-4">
         <div class="col-12">
             <div class="card p-4 shadow">
@@ -144,6 +130,36 @@
 
 <script>
 
+//🔥 STEP 3: PROTECT DASHBOARD (ADD THIS BLOCK HERE)
+function getCookie(name) {
+ let cookies = document.cookie.split(";");
+
+ for (let c of cookies) {
+     let [key, value] = c.trim().split("=");
+     if (key === name) return value;
+ }
+ return null;
+}
+
+//🔒 CHECK LOGIN
+let userId = getCookie("user_id");
+
+if (!userId) {
+ window.location.href = "landingpage.html";
+}
+
+// 🔥 dynamic target
+let targetCalories = 0;
+
+function loadTargetCalories(callback) {
+    fetch("getCalorieTarget", { credentials: "include" })
+    .then(res => res.text())
+    .then(data => {
+        targetCalories = parseInt(data) || 0;
+        callback();
+    });
+}
+
 // 🔥 COUNT-UP ANIMATION
 function animateValue(id, start, end, duration) {
     let range = end - start;
@@ -156,193 +172,131 @@ function animateValue(id, start, end, duration) {
 
         document.getElementById(id).innerText = Math.floor(value);
 
-        if (progress < duration) {
-            requestAnimationFrame(step);
-        }
+        if (progress < duration) requestAnimationFrame(step);
     }
 
     requestAnimationFrame(step);
 }
 
-// DASHBOARD DATA
+// 🔥 DASHBOARD DATA
 function loadDashboard() {
 
     fetch("getTotalCalories")
-        .then(res => res.text())
-        .then(data => {
-            let total = parseInt(data);
+    .then(res => res.text())
+    .then(data => {
+        let total = parseInt(data) || 0;
 
-            // 🔥 animated numbers
-            animateValue("todayCalories", 0, total, 800);
-            animateValue("remainingCalories", 0, 2200 - total, 800);
-        });
+        animateValue("todayCalories", 0, total, 800);
+        animateValue("remainingCalories", 0, Math.max(targetCalories - total, 0), 800);
+    });
 
+    // ✅ FIXED CURRENT WEIGHT
     fetch("getCurrentWeight")
-        .then(res => res.text())
-        .then(data => {
-            let weight = parseFloat(data);
+    .then(res => res.text())
+    .then(data => {
+        let value = parseFloat(data);
 
-            // smooth weight animation
-            animateValue("currentWeight", 0, weight, 800);
-        });
+        if (!isNaN(value)) {
+            animateValue("currentWeight", 0, value, 800);
+        } else {
+            document.getElementById("currentWeight").innerText = "--";
+        }
+    });
 
+    // ✅ FIXED WEEKLY CHANGE
     fetch("getWeightChange")
-        .then(res => res.text())
-        .then(data => {
-            let change = parseFloat(data);
-            let el = document.getElementById("weightChange");
+    .then(res => res.text())
+    .then(data => {
+        let el = document.getElementById("weightChange");
 
-            setTimeout(() => {
-                if (change > 0) {
-                    el.innerHTML = `<i class="bi bi-arrow-up text-danger"></i> +${change} kg`;
-                } else {
-                    el.innerHTML = `<i class="bi bi-arrow-down text-success"></i> ${change} kg`;
-                }
-            }, 600); // slight delay for animation feel
-        });
+        setTimeout(() => {
+
+            if (data === "NA") {
+                el.innerHTML = `<i></i> --`;
+                return;
+            }
+
+            let change = parseFloat(data) || 0;
+
+            if (change > 0) {
+                el.innerHTML = `<i class="bi bi-arrow-up text-danger"></i> +${change} kg`;
+            } else if (change < 0) {
+                el.innerHTML = `<i class="bi bi-arrow-down text-success"></i> ${change} kg`;
+            } else {
+                el.innerHTML = `<i class="bi bi-dash-circle text-secondary"></i> 0 kg`;
+            }
+
+        }, 600);
+    });
 }
 
-// GRAPHS
+// 🔥 GRAPHS
 let calorieChart, weightChartDash;
 
 function loadCalorieTrend() {
     fetch("getCalorieTrend")
-        .then(res => res.json())
-        .then(data => {
+    .then(res => res.json())
+    .then(data => {
 
-            let labels = data.map(d => d.date);
-            let values = data.map(d => d.calories);
+        let labels = data.map(d => d.date);
+        let values = data.map(d => d.calories);
 
-            let ctx = document.getElementById("calorieTrendChart").getContext("2d");
+        let ctx = document.getElementById("calorieTrendChart").getContext("2d");
 
-            if (calorieChart) calorieChart.destroy();
+        if (calorieChart) calorieChart.destroy();
 
-            let gradient = ctx.createLinearGradient(0, 0, 0, 300);
-            gradient.addColorStop(0, "#ff8c42");
-            gradient.addColorStop(1, "rgba(255,140,66,0.2)");
+        let gradient = ctx.createLinearGradient(0, 0, 0, 300);
+        gradient.addColorStop(0, "#ff8c42");
+        gradient.addColorStop(1, "rgba(255,140,66,0.2)");
 
-            calorieChart = new Chart(ctx, {
-                type: "bar",
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: "Calories",
-                        data: values,
-                        backgroundColor: gradient,
-                        borderRadius: 8,
-                        hoverBackgroundColor: "#ffa366"
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    animation: {
-                        duration: 1200,
-                        easing: "easeOutQuart"
-                    },
-                    plugins: {
-                        legend: {
-                            labels: {
-                                color: "#ddd",
-                                font: { size: 14 }
-                            }
-                        },
-                        tooltip: {
-                            backgroundColor: "#2a2a2a",
-                            titleColor: "#fff",
-                            bodyColor: "#ddd",
-                            borderColor: "#ff8c42",
-                            borderWidth: 1,
-                            padding: 10
-                        }
-                    },
-                    scales: {
-                        x: {
-                            ticks: { color: "#aaa" },
-                            grid: { color: "rgba(255,255,255,0.05)" }
-                        },
-                        y: {
-                            ticks: { color: "#aaa" },
-                            grid: { color: "rgba(255,255,255,0.05)" }
-                        }
-                    }
-                }
-            });
+        calorieChart = new Chart(ctx, {
+            type: "bar",
+            data: {
+                labels,
+                datasets: [{
+                    label: "Calories",
+                    data: values,
+                    backgroundColor: gradient,
+                    borderRadius: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: { duration: 1200 }
+            }
         });
+    });
 }
 
 function loadWeightTrend() {
     fetch("getWeightData")
-        .then(res => res.json())
-        .then(data => {
+    .then(res => res.json())
+    .then(data => {
 
-            let labels = data.map(d => d.date);
-            let values = data.map(d => d.weight);
+        let labels = data.map(d => d.date);
+        let values = data.map(d => d.weight);
 
-            let ctx = document.getElementById("weightTrendChart").getContext("2d");
+        let ctx = document.getElementById("weightTrendChart").getContext("2d");
 
-            if (weightChartDash) weightChartDash.destroy();
+        if (weightChartDash) weightChartDash.destroy();
 
-            let gradient = ctx.createLinearGradient(0, 0, 0, 300);
-            gradient.addColorStop(0, "rgba(255,140,66,0.4)");
-            gradient.addColorStop(1, "rgba(255,140,66,0)");
-
-            weightChartDash = new Chart(ctx, {
-                type: "line",
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: "Weight",
-                        data: values,
-                        borderColor: "#ff8c42",
-                        backgroundColor: gradient,
-                        fill: true,
-                        tension: 0.4,
-                        pointBackgroundColor: "#ff8c42",
-                        pointBorderColor: "#fff",
-                        pointRadius: 5,
-                        pointHoverRadius: 7
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    animation: {
-                        duration: 1200,
-                        easing: "easeOutQuart"
-                    },
-                    plugins: {
-                        legend: {
-                            labels: {
-                                color: "#ddd",
-                                font: { size: 14 }
-                            }
-                        },
-                        tooltip: {
-                            backgroundColor: "#2a2a2a",
-                            titleColor: "#fff",
-                            bodyColor: "#ddd",
-                            borderColor: "#ff8c42",
-                            borderWidth: 1,
-                            padding: 10
-                        }
-                    },
-                    scales: {
-                        x: {
-                            ticks: { color: "#aaa" },
-                            grid: { color: "rgba(255,255,255,0.05)" }
-                        },
-                        y: {
-                            ticks: { color: "#aaa" },
-                            grid: { color: "rgba(255,255,255,0.05)" }
-                        }
-                    }
-                }
-            });
+        weightChartDash = new Chart(ctx, {
+            type: "line",
+            data: {
+                labels,
+                datasets: [{
+                    label: "Weight",
+                    data: values,
+                    borderColor: "#ff8c42",
+                    tension: 0.4
+                }]
+            }
         });
+    });
 }
 
-// 🔥 CLEAN INSIGHTS (WITH DELAYED ENTRY)
+// 🔥 INSIGHTS (FIXED)
 function loadInsights() {
 
     let insights = [];
@@ -350,44 +304,44 @@ function loadInsights() {
 
     function checkDone() {
         loaded++;
-        if (loaded === 2) {
-            updateInsights(insights);
-        }
+        if (loaded === 2) updateInsights(insights);
     }
 
     fetch("getTotalCalories")
-        .then(res => res.text())
-        .then(data => {
+    .then(res => res.text())
+    .then(data => {
 
-            let total = parseInt(data);
+        let total = parseInt(data) || 0;
 
-            if (total > 2200) {
-                insights.push(`<i class="bi bi-exclamation-triangle text-danger"></i> Exceeded calorie limit`);
-            } else if (total > 1500) {
-                insights.push(`<i class="bi bi-check-circle text-success"></i> Close to goal`);
-            } else {
-                insights.push(`<i class="bi bi-info-circle text-primary"></i> Can consume more calories`);
-            }
+        if (total > targetCalories)
+            insights.push(`<i class="bi bi-exclamation-triangle text-danger"></i> Exceeded calorie limit`);
+        else if (total > targetCalories * 0.7)
+            insights.push(`<i class="bi bi-check-circle text-success"></i> Close to goal`);
+        else
+            insights.push(`<i class="bi bi-info-circle text-primary"></i> Can consume more calories`);
 
-            checkDone(); // ✅ fixed
-        });
+        checkDone();
+    });
 
     fetch("getWeightChange")
-        .then(res => res.text())
-        .then(data => {
+    .then(res => res.text())
+    .then(data => {
 
-            let change = parseFloat(data);
+        if (data === "NA") {
+            insights.push(`<i class="bi bi-info-circle text-primary"></i> First weight entry recorded`);
+        } else {
+            let change = parseFloat(data) || 0;
 
-            if (change > 0) {
+            if (change > 0)
                 insights.push(`<i class="bi bi-arrow-up text-danger"></i> Weight increased`);
-            } else if (change < 0) {
+            else if (change < 0)
                 insights.push(`<i class="bi bi-arrow-down text-success"></i> Weight decreased`);
-            } else {
+            else
                 insights.push(`<i class="bi bi-dash-circle text-secondary"></i> Weight stable`);
-            }
+        }
 
-            checkDone(); // ✅ fixed
-        });
+        checkDone();
+    });
 }
 
 function updateInsights(insights) {
@@ -397,17 +351,21 @@ function updateInsights(insights) {
     insights.forEach((i, index) => {
         setTimeout(() => {
             ul.innerHTML += `<li class="mb-2 d-flex align-items-center gap-2">${i}</li>`;
-        }, index * 200); // stagger animation
+        }, index * 200);
     });
 }
 
-// LOAD
+// 🔥 LOAD
 document.addEventListener("DOMContentLoaded", function () {
-    loadDashboard();
+    loadTargetCalories(() => {
+        loadDashboard();
+        loadInsights();
+    });
+
     loadCalorieTrend();
     loadWeightTrend();
-    loadInsights();
 });
+
 </script>
 
 <script>

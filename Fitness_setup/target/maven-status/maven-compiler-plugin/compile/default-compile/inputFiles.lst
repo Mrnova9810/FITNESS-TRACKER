@@ -1,7 +1,9 @@
 C:\Users\Suraj Bhan\OneDrive\Desktop\code\java\Fit_Project\FITNESS-TRACKER\Fitness_setup\src\main\java\com\BACKEND\AddCalorieServlet.java
 C:\Users\Suraj Bhan\OneDrive\Desktop\code\java\Fit_Project\FITNESS-TRACKER\Fitness_setup\src\main\java\com\BACKEND\AddWeightServlet.java
+C:\Users\Suraj Bhan\OneDrive\Desktop\code\java\Fit_Project\FITNESS-TRACKER\Fitness_setup\src\main\java\com\BACKEND\AutoLoginServlet.java
 C:\Users\Suraj Bhan\OneDrive\Desktop\code\java\Fit_Project\FITNESS-TRACKER\Fitness_setup\src\main\java\com\BACKEND\DeleteCalorieServlet.java
 C:\Users\Suraj Bhan\OneDrive\Desktop\code\java\Fit_Project\FITNESS-TRACKER\Fitness_setup\src\main\java\com\BACKEND\DeleteWeightServlet.java
+C:\Users\Suraj Bhan\OneDrive\Desktop\code\java\Fit_Project\FITNESS-TRACKER\Fitness_setup\src\main\java\com\BACKEND\GetCalorieTargetServlet.java
 C:\Users\Suraj Bhan\OneDrive\Desktop\code\java\Fit_Project\FITNESS-TRACKER\Fitness_setup\src\main\java\com\BACKEND\GetCalorieTrendServlet.java
 C:\Users\Suraj Bhan\OneDrive\Desktop\code\java\Fit_Project\FITNESS-TRACKER\Fitness_setup\src\main\java\com\BACKEND\GetCurrentWeightServlet.java
 C:\Users\Suraj Bhan\OneDrive\Desktop\code\java\Fit_Project\FITNESS-TRACKER\Fitness_setup\src\main\java\com\BACKEND\GetProfileServlet.java
@@ -12,6 +14,8 @@ C:\Users\Suraj Bhan\OneDrive\Desktop\code\java\Fit_Project\FITNESS-TRACKER\Fitne
 C:\Users\Suraj Bhan\OneDrive\Desktop\code\java\Fit_Project\FITNESS-TRACKER\Fitness_setup\src\main\java\com\BACKEND\GetWeightHistoryServlet.java
 C:\Users\Suraj Bhan\OneDrive\Desktop\code\java\Fit_Project\FITNESS-TRACKER\Fitness_setup\src\main\java\com\BACKEND\LoginServlet.java
 C:\Users\Suraj Bhan\OneDrive\Desktop\code\java\Fit_Project\FITNESS-TRACKER\Fitness_setup\src\main\java\com\BACKEND\LogoutServlet.java
+C:\Users\Suraj Bhan\OneDrive\Desktop\code\java\Fit_Project\FITNESS-TRACKER\Fitness_setup\src\main\java\com\BACKEND\RecalculateCaloriesServlet.java
+C:\Users\Suraj Bhan\OneDrive\Desktop\code\java\Fit_Project\FITNESS-TRACKER\Fitness_setup\src\main\java\com\BACKEND\SetupServlet.java
 C:\Users\Suraj Bhan\OneDrive\Desktop\code\java\Fit_Project\FITNESS-TRACKER\Fitness_setup\src\main\java\com\BACKEND\SignupServlet.java
 C:\Users\Suraj Bhan\OneDrive\Desktop\code\java\Fit_Project\FITNESS-TRACKER\Fitness_setup\src\main\java\com\BACKEND\UpdateProfileServlet.java
 C:\Users\Suraj Bhan\OneDrive\Desktop\code\java\Fit_Project\FITNESS-TRACKER\Fitness_setup\src\main\java\com\BACKEND\UpdateWeightServlet.java

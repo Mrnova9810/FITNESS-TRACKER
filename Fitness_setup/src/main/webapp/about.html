@@ -1,32 +1,95 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta charset="UTF-8">
 <script src="https://unpkg.com/lucide@latest"></script>
-    <title>About - Fitness Tracker</title>
+<title>About - Fitness Tracker</title>
 
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+<link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
 
-    <!-- Bootstrap Icons (for profile icon) -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+<link rel="stylesheet" href="dashboard_style.css">
 
-    <!-- Your CSS -->
-    <link rel="stylesheet" href="dashboard_style.css">
+<style>
+.card {
+    transition: all 0.3s ease;
+    border-radius: 16px;
+}
+.card:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 15px 40px rgba(255, 140, 66, 0.15);
+}
+
+.nav-link {
+    transition: all 0.3s ease;
+}
+.nav-link:hover {
+    color: #ff8c42 !important;
+    transform: translateY(-2px);
+}
+
+.logo {
+    transition: all 0.3s ease;
+}
+.logo:hover {
+    transform: scale(1.05);
+}
+
+/* 🔥 MISSION BOX ENTRY FIX */
+.mission-box {
+    opacity: 0;
+    transform: translateY(50px) scale(0.95);
+    animation: missionEntry 1s ease forwards;
+    animation-delay: 0.3s;
+}
+
+@keyframes missionEntry {
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* 🔥 MISSION SLIDER */
+.mission-text {
+    position: relative;
+    overflow: hidden;
+    height: 120px;
+}
+
+.mission-message {
+    position: absolute;
+    width: 100%;
+    opacity: 0;
+    transform: translateX(100%);
+    transition: all 0.7s ease;
+    line-height: 1.6;
+}
+
+.mission-message.active {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.mission-message.exit-left {
+    transform: translateX(-100%);
+    opacity: 0;
+}
+</style>
+
 </head>
 
 <body>
 
 <!-- NAVBAR -->
-<!-- 🔥 NAVBAR (LANDING STYLE) -->
 <div class="navbar">
-
     <div class="logo">
         <i data-lucide="activity"></i>
         Fit<span>Track</span>
     </div>
 
     <div class="nav-buttons">
-
         <a href="dashboard.html" class="nav-link">Dashboard</a>
         <a href="about.html" class="nav-link" style="color:#ff8c42;">About</a>
         <a href="contact.html" class="nav-link">Contact</a>
@@ -54,16 +117,14 @@
                 </li>
             </ul>
         </div>
-
     </div>
-
 </div>
 
 <!-- CONTENT -->
 <div class="container mt-5 mb-5">
 
     <!-- HERO -->
-    <div class="text-center mb-5">
+    <div class="text-center mb-5" data-aos="fade-up">
         <h1 class="fw-bold">About Fit<span style="color:#ff8c42;">Track</span></h1>
         <p class="text-secondary mt-3" style="max-width: 600px; margin:auto;">
             A smart and simple way to track your fitness journey.  
@@ -74,7 +135,7 @@
     <!-- FEATURES -->
     <div class="row g-4 mb-5">
 
-        <div class="col-md-4">
+        <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
             <div class="card p-4 text-center h-100">
                 <i class="bi bi-fire fs-1 mb-3" style="color:#ff8c42;"></i>
                 <h5>Calorie Tracking</h5>
@@ -84,7 +145,7 @@
             </div>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
             <div class="card p-4 text-center h-100">
                 <i class="bi bi-graph-up fs-1 mb-3" style="color:#ff8c42;"></i>
                 <h5>Progress Visualization</h5>
@@ -94,7 +155,7 @@
             </div>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
             <div class="card p-4 text-center h-100">
                 <i class="bi bi-speedometer2 fs-1 mb-3" style="color:#ff8c42;"></i>
                 <h5>Performance Insights</h5>
@@ -106,22 +167,73 @@
 
     </div>
 
-    <!-- MISSION -->
-    <div class="card p-5 text-center">
-        <h3 class="mb-3">Our Mission</h3>
-        <p class="text-secondary" style="max-width: 700px; margin:auto;">
-            FitTrack is built to make fitness tracking effortless and motivating.  
-            Whether you're trying to lose weight, gain muscle, or just stay healthy —  
-            we provide the tools you need to stay on track and improve every day.
-        </p>
+    <!-- 🔥 MISSION -->
+    <div class="card p-5 text-center mission-box" data-aos="fade-up" data-aos-delay="200">
+        <h3 class="mb-4">Our Mission</h3>
+
+        <div class="mission-text">
+
+            <p class="text-secondary mission-message active">
+                Fitness shouldn’t feel confusing or overwhelming.<br>
+                FitTrack simplifies everything so you can focus on consistency and real progress.
+            </p>
+
+            <p class="text-secondary mission-message">
+                Track your calories, monitor your weight,<br>
+                and clearly understand your journey without overthinking.
+            </p>
+
+            <p class="text-secondary mission-message">
+                Real transformation comes from small daily actions.<br>
+                We help you stay disciplined even when motivation disappears.
+            </p>
+
+            <p class="text-secondary mission-message">
+                This isn’t just about tracking numbers.<br>
+                It’s about building habits and becoming stronger mentally and physically.
+            </p>
+
+            <p class="text-secondary mission-message">
+                With FitTrack, you stay accountable every day,<br>
+                making sure your goals turn into actual results.
+            </p>
+
+        </div>
     </div>
 
 </div>
 
-<!-- Bootstrap JS (IMPORTANT for dropdowns) -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+
 <script>
 lucide.createIcons();
+
+AOS.init({
+    duration: 1000,
+    once: true
+});
+
+/* 🔥 SLIDER */
+const messages = document.querySelectorAll(".mission-message");
+let index = 0;
+
+setInterval(() => {
+
+    const current = messages[index];
+    current.classList.remove("active");
+    current.classList.add("exit-left");
+
+    setTimeout(() => {
+        current.classList.remove("exit-left");
+    }, 700);
+
+    index = (index + 1) % messages.length;
+
+    const next = messages[index];
+    next.classList.add("active");
+
+}, 3000);
 </script>
 
 </body>
