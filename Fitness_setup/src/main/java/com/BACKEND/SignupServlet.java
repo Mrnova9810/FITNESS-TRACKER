@@ -1,57 +1,65 @@
 package com.BACKEND;
 
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
+import java.sql.*;
+
 import org.mindrot.jbcrypt.BCrypt;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.*;
 
 @WebServlet("/signup")
 public class SignupServlet extends HttpServlet {
 
+    private static final String DB_URL = "jdbc:mysql://localhost:3306/fitness_db";
+    private static final String DB_USER = "root";
+    private static final String DB_PASS = "1234";
+
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        // 1. Get data from form
         String username = request.getParameter("username");
         String email = request.getParameter("email");
         String password = request.getParameter("password");
 
         try {
-            // 2. Load JDBC Driver
             Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection con = DriverManager.getConnection(DB_URL, DB_USER, DB_PASS);
 
-            // 3. Create connection
-            Connection con = DriverManager.getConnection(
-                "jdbc:mysql://localhost:3306/fitness_db",
-                "root",
-                "1234"   // 🔴 replace with your MySQL password
-            );
-
-            // 4. Hash the password before storing
+            // 🔐 Hash password
             String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
 
-            // 5. SQL Query
+            // 🔥 IMPORTANT: get generated user_id
             PreparedStatement ps = con.prepareStatement(
-                "INSERT INTO users(username, email, password) VALUES (?, ?, ?)"
+                "INSERT INTO users(username, email, password) VALUES (?, ?, ?)",
+                Statement.RETURN_GENERATED_KEYS
             );
 
             ps.setString(1, username);
             ps.setString(2, email);
             ps.setString(3, hashedPassword);
 
-            // 5. Execute
             int result = ps.executeUpdate();
 
             if (result > 0) {
-                // success → redirect to login page
-                response.sendRedirect("index.html");
+
+                // 🔥 GET USER ID
+                ResultSet rs = ps.getGeneratedKeys();
+                int userId = -1;
+
+                if (rs.next()) {
+                    userId = rs.getInt(1);
+                }
+
+                // 🔥 CREATE SESSION (VERY IMPORTANT)
+                HttpSession session = request.getSession();
+                session.setAttribute("user_id", userId);
+                session.setAttribute("username", username);
+
+                // 🔥 REDIRECT TO SETUP PAGE
+                response.sendRedirect("setup.html");
+
             } else {
                 response.getWriter().println("Signup Failed");
             }
@@ -60,6 +68,7 @@ public class SignupServlet extends HttpServlet {
 
         } catch (Exception e) {
             e.printStackTrace();
+            response.getWriter().println("Error: " + e.getMessage());
         }
     }
 }
