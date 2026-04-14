@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html>
+<head>
+<head>
+<meta charset="UTF-8">
+    <title>Weight Tracker</title>
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <link rel="stylesheet" href="dashboard_style.css">
+
+<style>
+/* FORCE HOVER EFFECT (override bootstrap) */
+.table .btn.edit-btn:hover i {
+    color: #ffd633 !important;
+    text-shadow: 0 0 12px rgba(255, 204, 0, 0.9) !important;
+    transform: scale(1.2);
+}
+
+.table .btn.delete-btn:hover i {
+    color: #ff1a1a !important;
+    text-shadow: 0 0 12px rgba(255, 77, 77, 0.9) !important;
+    transform: scale(1.2);
+}
+
+.table .btn.save-btn:hover i {
+    color: #00ff88 !important;
+    text-shadow: 0 0 12px rgba(0, 230, 118, 0.9) !important;
+    transform: scale(1.2);
+}
+
+/* SMOOTH TRANSITION */
+.table .btn i {
+    transition: all 0.2s ease !important;
+}
+.table > :not(caption) > * > * {
+    background-color: transparent !important;
+}
+.card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(12px);
+    border-radius: 16px;
+    border: 1px solid rgba(255,255,255,0.1);
+    color: #f5f5f5;
+    transition: 0.3s;
+}
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(255,140,66,0.2);
+}
+.form-control {
+    background: rgba(255,255,255,0.05) !important; /* ✅ FIXED */
+    border: 1px solid rgba(255,255,255,0.1) !important;
+    color: #f5f5f5 !important;
+    backdrop-filter: blur(10px);
+}
+.form-control:focus {
+    border-color: #ff8c42 !important;
+    box-shadow: 0 0 8px rgba(255,140,66,0.3);
+}
+.form-control::placeholder {
+    color: #aaa;
+}
+
+.btn-primary {
+    background: #ff8c42;
+    border: none;
+    border-radius: 8px;
+}
+.btn-primary:hover {
+    background: #ffa366;
+    box-shadow: 0 5px 15px rgba(255,140,66,0.3);
+}
+.btn-primary:active {
+    transform: scale(0.96);
+}
+
+/* TABLE */
+.table tbody td,
+.table tbody td * {
+    color: #f5f5f5 !important;
+}
+.table {
+    color: #eee !important;
+    background: transparent !important;
+}
+.table thead {
+    background: rgba(255,255,255,0.05) !important;
+}
+.table th {
+    color: #bbb !important;
+    border: none !important;
+}
+.table td {
+    border-top: 1px solid rgba(255,255,255,0.08) !important;
+}
+.table tbody tr:hover {
+    background: rgba(255,140,66,0.08) !important;
+}
+
+/* ICON COLORS */
+.edit-btn i { color: #ffcc00; }
+.delete-btn i { color: #ff4d4d; }
+.save-btn i { color: #00e676; }
+
+/* ROW ANIMATIONS */
+@keyframes rowEnter {
+    from { opacity:0; transform:translateY(-20px);}
+    to { opacity:1; transform:translateY(0);}
+}
+.row-enter { animation: rowEnter 0.4s ease; }
+
+@keyframes rowExit {
+    to { opacity:0; transform:translateX(-50px);}
+}
+.row-exit { animation: rowExit 0.4s ease forwards; }
+
+.logo i { color: #ff8c42; }
+</style>
+</head>
+
+<body>
+
+<div style="height:1px;background: linear-gradient(to right,transparent,rgba(255,140,66,0.5),transparent);"></div>
+
+<div class="navbar">
+    <div class="logo">
+        <i data-lucide="activity"></i>
+        Fit<span>Track</span>
+    </div>
+
+    <div class="nav-buttons">
+        <a href="dashboard.html" class="nav-link">Dashboard</a>
+        <a href="about.html" class="nav-link">About</a>
+        <a href="contact.html" class="nav-link" style="color:#ff8c42;">Contact</a>
+
+        <div class="dropdown d-inline-block">
+            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                Features
+            </a>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="calorie.html">Calorie Tracker</a></li>
+                <li><a class="dropdown-item" href="weight.html">Weight Tracker</a></li>
+            </ul>
+        </div>
+
+        <div class="menu-container ms-3">
+
+            <div class="menu-icon" onclick="toggleMenu(event)">
+                ☰
+            </div>
+
+            <div id="profileDropdown" style="
+                display:none;
+                position:absolute;
+                top:55px;
+                right:0;
+                width:240px;
+                background: rgba(30,30,30,0.6);
+                backdrop-filter: blur(18px);
+                border-radius:14px;
+                padding:10px;
+                z-index:9999;
+                border:1px solid rgba(255,140,66,0.25);
+                box-shadow:
+                    0 10px 30px rgba(0,0,0,0.6),
+                    0 0 20px rgba(255,140,66,0.15),
+                    inset 0 0 10px rgba(255,140,66,0.05);
+            ">
+
+                <div style="display:flex;align-items:center;gap:10px;padding:12px;height:50px;overflow:hidden;">
+                    <img id="navProfilePic" src="default.png" style="width:36px;height:36px;border-radius:50%;object-fit:cover;">
+                    <span id="navUsername">User</span>
+                </div>
+
+                <div style="height:1px;background:rgba(255,255,255,0.1);"></div>
+
+                <a href="profile.html" style="padding:12px;color:#eee;text-decoration:none;">
+                    <i class="bi bi-person" style="color:#ff8c42;"></i> View Profile
+                </a>
+                <a href="logout" style="padding:12px;color:#ff6b6b;text-decoration:none;">
+                    <i class="bi bi-box-arrow-right" style="color:#ff8c42;"></i> Logout
+                </a>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container mt-5 mb-5">
+
+<div class="row g-4">
+
+<div class="col-md-4">
+<div class="card p-4 shadow mb-4">
+<h5 class="text-center mb-3">
+<i class="bi bi-plus-circle"></i> Add Weight
+</h5>
+
+<form id="weightForm">
+<div class="mb-3">
+<label class="mb-2">Enter Weight (kg)</label>
+<input type="number" step="0.1" min="1" name="weight" class="form-control" required>
+</div>
+
+<button class="btn btn-primary w-100">
+<i class="bi bi-check-circle"></i> Save
+</button>
+</form>
+</div>
+
+<div class="card p-3 shadow">
+<h6 class="text-center mb-3">
+<i class="bi bi-clock-history"></i> History
+</h6>
+
+<div style="max-height: 350px; overflow-y: auto;">
+<table class="table text-center">
+<thead>
+<tr>
+<th>Date</th>
+<th>Weight</th>
+<th></th>
+</tr>
+</thead>
+
+<tbody id="weightTable"></tbody>
+</table>
+</div>
+</div>
+</div>
+
+<div class="col-md-8">
+<div class="card p-4 shadow h-100 text-center">
+<h4 class="mb-4">
+<i class="bi bi-graph-up"></i> Weight Progress
+</h4>
+
+<div style="height: 400px;">
+<canvas id="weightChart"></canvas>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+function toggleMenu(event) {
+    event.stopPropagation();
+    const menu = document.getElementById("profileDropdown");
+
+    if (menu.classList.contains("show")) {
+        menu.classList.remove("show");
+        setTimeout(() => menu.style.display = "none", 200);
+    } else {
+        menu.style.display = "block";
+        setTimeout(() => menu.classList.add("show"), 10);
+    }
+}
+
+window.onclick = function(e) {
+    const menu = document.getElementById("profileDropdown");
+    if (!e.target.closest(".menu-container")) {
+        menu.classList.remove("show");
+        setTimeout(() => menu.style.display = "none", 200);
+    }
+};
+function loadNavbarProfile() {
+    fetch("getProfile", { credentials: "include" })
+    .then(res => res.json())
+    .then(data => {
+        document.getElementById("navUsername").innerText = data.username || "User";
+
+        let img = document.getElementById("navProfilePic");
+        if (data.profilePic && data.profilePic.trim() !== "") {
+            img.src = data.profilePic;
+            img.onerror = () => img.src = "default.png";
+        } else {
+            img.src = "default.png";
+        }
+    });
+}
+let weightChart;
+
+document.addEventListener("DOMContentLoaded", function () {
+	loadNavbarProfile();
+document.getElementById("weightForm").addEventListener("submit", function (e) {
+e.preventDefault();
+
+let weight = document.querySelector('input[name="weight"]').value;
+
+fetch("addWeight", {
+method: "POST",
+headers: { "Content-Type": "application/x-www-form-urlencoded" },
+body: "weight=" + encodeURIComponent(weight)
+})
+.then(() => {
+document.getElementById("weightForm").reset();
+loadWeightTable();
+loadWeightChart();
+});
+});
+
+loadWeightChart();
+loadWeightTable();
+});
+
+function loadWeightChart() {
+fetch("getWeightData")
+.then(res => res.json())
+.then(data => {
+
+let labels = data.map(i => i.date);
+let weights = data.map(i => i.weight);
+
+let ctx = document.getElementById("weightChart").getContext("2d");
+
+if (weightChart) {
+weightChart.data.labels = labels;
+weightChart.data.datasets[0].data = weights;
+weightChart.update();
+return;
+}
+
+weightChart = new Chart(ctx, {
+type: "line",
+data: {
+labels,
+datasets: [{
+label: "Weight (kg)",
+data: weights,
+borderColor: "#ff8c42",
+backgroundColor: "rgba(255,140,66,0.2)",
+tension: 0.3,
+fill: true,
+pointRadius: 5
+}]
+},
+options: {
+responsive: true,
+maintainAspectRatio: false,
+animation: {
+duration: 1000,
+easing: "easeOutQuart"
+},
+plugins: {
+legend: {
+labels: { color: "#ddd" }
+}
+}
+}
+});
+});
+}
+
+function loadWeightTable() {
+let table = document.getElementById("weightTable");
+
+fetch("getWeightHistory")
+.then(res => res.json())
+.then(data => {
+table.innerHTML = "";
+
+data.forEach(item => {
+let row = `
+<tr class="row-enter">
+<td>${item.date}</td>
+<td class="weight-cell">${item.weight}</td>
+<td>
+<button class="btn btn-sm me-2 edit-btn"
+onclick="editWeight(event, ${item.id})">
+<i class="bi bi-pencil"></i>
+</button>
+
+<button class="btn btn-sm delete-btn"
+onclick="deleteWeight(event, ${item.id})">
+<i class="bi bi-trash3"></i>
+</button>
+</td>
+</tr>
+`;
+table.innerHTML += row;
+});
+});
+}
+
+function editWeight(event, id) {
+
+    let button = event.currentTarget;
+    let row = button.closest("tr");
+    let cell = row.querySelector(".weight-cell");
+    let deleteBtn = row.querySelector(".delete-btn");
+
+    if (button.classList.contains("saving")) {
+
+        let newWeight = cell.querySelector("input").value;
+
+        fetch("updateWeight", {
+            method: "POST",
+            headers: {"Content-Type":"application/x-www-form-urlencoded"},
+            body: "id=" + id + "&weight=" + encodeURIComponent(newWeight)
+        }).then(() => {
+
+            cell.innerText = newWeight;
+
+            button.innerHTML = `<i class="bi bi-pencil"></i>`;
+            button.classList.remove("saving");
+            button.classList.remove("save-btn"); // ✅ FIX
+
+            deleteBtn.style.display = "inline-block";
+
+            loadWeightChart();
+        });
+
+    } else {
+
+        let currentWeight = cell.innerText;
+
+        cell.innerHTML = `
+            <input type="number" step="0.1" min="1"
+                value="${currentWeight}"
+                class="form-control form-control-sm">
+        `;
+
+        button.innerHTML = `<i class="bi bi-check-circle"></i>`;
+        button.classList.add("saving");
+        button.classList.add("save-btn");
+
+        deleteBtn.style.display = "none";
+    }
+}
+
+function deleteWeight(event, id) {
+let row = event.target.closest("tr");
+row.classList.add("row-exit");
+
+setTimeout(() => {
+fetch("deleteWeight", {
+method: "POST",
+headers: {"Content-Type":"application/x-www-form-urlencoded"},
+body: "id=" + id
+}).then(() => {
+loadWeightTable();
+loadWeightChart();
+});
+}, 400);
+}
+</script>
+
+<script>
+lucide.createIcons();
+</script>
+
+</body>
+</html>

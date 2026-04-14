@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Profile - FitTrack</title>
+
+    <link rel="stylesheet" href="profile.css">
+</head>
+
+<body>
+<div style="
+height:1px;
+background: linear-gradient(
+    to right,
+    transparent,
+    rgba(255,140,66,0.5),
+    transparent
+);
+"></div>
+
+<div class="navbar">
+    <div class="logo">
+    <i data-lucide="activity"></i>
+    Fit<span>Track</span>
+</div>
+    <div class="back" onclick="goBack()" style="
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 15px;
+">
+    Back
+</div>
+</div>
+
+<div class="container">
+
+    <!-- Tabs -->
+    <div class="tabs">
+        <button id="profileTab" class="active">Profile</button>
+        <button id="editTab">Edit Profile</button>
+    </div>
+
+    <div class="content">
+
+        <!-- LEFT -->
+        <div class="left">
+
+            <!-- PROFILE VIEW -->
+            <div id="profileView">
+                <div class="row"><div class="label">Username :</div><div class="value" id="p_username"></div></div>
+                <div class="row"><div class="label">Gmail :</div><div class="value" id="p_email"></div></div>
+                <div class="row"><div class="label">Password :</div><div class="value">********</div></div>
+                <div class="row"><div class="label">Goal :</div><div class="value" id="p_goal"></div></div>
+                <div class="row"><div class="label">Age :</div><div class="value" id="p_age"></div></div>
+                <div class="row"><div class="label">Height :</div><div class="value" id="p_height"></div></div>
+            </div>
+
+            <!-- EDIT VIEW -->
+            <div id="editView" style="display:none;">
+                <div class="row"><div class="label">Username :</div><input id="e_username"></div>
+                <div class="row"><div class="label">Gmail :</div><input id="e_email"></div>
+                <div class="row"><div class="label">Password :</div><input type="password" id="e_password"></div>
+
+                <div class="row">
+                    <div class="label">Goal :</div>
+                    <select id="e_goal">
+                        <option value="Weight Loss">Weight Loss</option>
+                        <option value="Muscle Gain">Muscle Gain</option>
+                        <option value="Maintain">Maintain</option>
+                    </select>
+                </div>
+
+                <div class="row"><div class="label">Age :</div><input id="e_age"></div>
+                <div class="row"><div class="label">Height :</div><input id="e_height"></div>
+
+                <button class="save-btn" id="saveBtn">Save</button>
+            </div>
+
+        </div>
+
+        <!-- RIGHT -->
+        <div class="right">
+    <div class="avatar-box">
+
+        <img id="avatarImg" class="avatar" src="default.png" alt=" ">
+
+        <!-- 🔥 NEW BUTTON -->
+        <button class="change-photo-btn" id="changePhotoBtn">
+            Change Photo
+        </button>
+
+        <input type="file" id="fileInput" hidden accept="image/*">
+
+    </div>
+</div>
+
+    </div>
+</div>
+
+<script src="profile.js"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>
+lucide.createIcons();
+</script>
+</body>
+</html>

@@ -36,8 +36,8 @@ public class LoginServlet extends HttpServlet {
             );
             ps.setString(1, username);
             ResultSet rs = ps.executeQuery();
-
-            if (rs.next()) {
+            
+            if(rs.next()){
 
                 String storedHash = rs.getString("password");
 

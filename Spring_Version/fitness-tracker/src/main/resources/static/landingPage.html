@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Fitness Tracker</title>
+
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<style>
+#loginError {
+    animation: shake 0.3s ease;
+}
+
+@keyframes shake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    50% { transform: translateX(5px); }
+    75% { transform: translateX(-3px); }
+    100% { transform: translateX(0); }
+}
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', sans-serif;
+}
+.icon{color: #ff8c42;}
+.login {
+    border: 2px solid #ff8c42;
+    color: #ff8c42;
+}
+
+.signup {
+    background: #ff8c42;
+    color: white;
+}
+body {
+    background-color: #1c1c1c;
+    color: #f5f5f5;
+
+    background-image:
+        radial-gradient(circle at 20% 30%, rgba(255, 140, 66, 0.20), transparent 45%),
+        radial-gradient(circle at 80% 70%, rgba(255, 140, 66, 0.12), transparent 45%),
+        linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+
+    background-size: auto, auto, 35px 35px, 35px 35px;
+}
+
+/* Navbar */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px 50px;
+    background: rgba(42, 42, 42, 0.6);
+    backdrop-filter: blur(10px);
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.logo span { color: #ff8c42; }
+.logo i { color: #ff8c42; }
+
+.nav-buttons a {
+    margin-left: 15px;
+    padding: 8px 16px;
+    border-radius: 6px;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* Hero animation */
+.hero {
+    text-align: center;
+    padding: 100px 20px;
+
+    opacity: 0;
+    transform: translateY(30px);
+    animation: fadeUp 1s ease forwards;
+}
+
+@keyframes fadeUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.hero h1 {
+    font-size: 42px;
+    margin-bottom: 20px;
+}
+
+/* Typing */
+#typing-text {
+    color: #bbbbbb;
+    font-size: 18px;
+}
+
+#typing-text::after {
+    content: "|";
+    animation: blink 1s infinite;
+}
+
+@keyframes blink {
+    0%, 50%, 100% { opacity: 1; }
+    25%, 75% { opacity: 0; }
+}
+
+/* Features */
+.features {
+    display: flex;
+    justify-content: space-around;
+    padding: 80px 50px;
+    gap: 20px;
+}
+
+.feature-box {
+    flex: 1;
+    text-align: center;
+    padding: 30px;
+    border-radius: 15px;
+
+    background: rgba(255,255,255,0.04);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.1);
+
+    opacity: 0;
+    transform: translateY(40px);
+    transition: all 0.4s ease;
+}
+
+.feature-box.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.feature-box:nth-child(1) { transition-delay: 0.1s; }
+.feature-box:nth-child(2) { transition-delay: 0.2s; }
+.feature-box:nth-child(3) { transition-delay: 0.3s; }
+
+.feature-box:hover {
+    transform: translateY(-12px) scale(1.02);
+    box-shadow:
+        0 10px 30px rgba(255,140,66,0.2),
+        0 0 20px rgba(255,140,66,0.15);
+    border: 1px solid rgba(255,140,66,0.4);
+}
+
+.feature-box i {
+    width: 40px;
+    height: 40px;
+    color: #ff8c42;
+    margin-bottom: 10px;
+}
+
+/* 🔥 MODAL (UPGRADED) */
+.modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    opacity: 0;
+    pointer-events: none;
+    transition: 0.3s;
+}
+
+.modal.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.modal-content {
+    position: relative;
+    width: 320px;
+    padding: 25px;
+    border-radius: 12px;
+
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(12px);
+
+    transform: translateY(30px) scale(0.95);
+    opacity: 0;
+    transition: 0.3s;
+}
+
+.modal.active .modal-content {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+}
+
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 20px;
+    cursor: pointer;
+    color: #aaa;
+}
+
+.close-btn:hover {
+    color: #ff8c42;
+}
+
+.modal-content label {
+    font-size: 13px;
+    color: #bbb;
+    display: block;
+    margin-top: 10px;
+}
+
+.modal-content input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 6px;
+    border: none;
+    margin-top: 5px;
+    background: #2a2a2a;
+    color: white;
+}
+
+.modal-content button {
+    width: 100%;
+    padding: 10px;
+    background: #ff8c42;
+    border: none;
+    color: white;
+    border-radius: 6px;
+    margin-top: 15px;
+}
+
+.footer {
+    text-align: center;
+    padding: 30px;
+    color: #999;
+}
+
+.hidden { display: none; }
+
+</style>
+</head>
+
+<body>
+
+<div class="navbar">
+    <div class="logo">
+        <i data-lucide="activity"></i>
+        Fit<span>Track</span>
+    </div>
+
+    <div class="nav-buttons">
+        <a class="login" onclick="openLogin()">Login</a>
+        <a class="signup" onclick="openSignup()">Sign Up</a>
+    </div>
+</div>
+
+<div class="hero">
+    <h1>Track Your Fitness Journey</h1>
+    <p id="typing-text"></p>
+</div>
+
+<div class="features">
+    <div class="feature-box">
+        <i data-lucide="flame" class="icon"></i>
+        <h3>Calorie Tracker</h3>
+        <p>Track daily calories easily</p>
+    </div>
+
+    <div class="feature-box">
+        <i data-lucide="scale" class="icon"></i>
+        <h3>Weight Logging</h3>
+        <p>Monitor your weight progress</p>
+    </div>
+
+    <div class="feature-box">
+        <i data-lucide="bar-chart-3" class="icon"></i>
+        <h3>Progress Summary</h3>
+        <p>Visualize your fitness journey</p>
+    </div>
+</div>
+
+<div class="footer">
+    © 2026 FitTrack
+</div>
+
+<!-- 🔥 MODAL -->
+<div class="modal" id="modal">
+    <div class="modal-content">
+
+        <span class="close-btn" onclick="closeModal()">×</span>
+
+        <!-- 🔥 LOGIN FORM (UPDATED - NO action/method) -->
+        <form id="loginForm">
+            <h2>Login</h2>
+
+            <label>Username</label>
+            <input type="text" name="username" required>
+
+            <label>Password</label>
+            <input type="password" name="password" required>
+
+            <button type="submit">Login</button>
+        </form>
+
+        <!-- 🔥 SIGNUP FORM (UNCHANGED) -->
+        <form id="signupForm" class="hidden" action="signup" method="post">
+            <h2>Create Account</h2>
+
+            <label>Username</label>
+            <input type="text" name="username" required>
+
+            <label>Email</label>
+            <input type="email" name="email" required>
+
+            <label>Password</label>
+            <input type="password" name="password" required>
+
+            <button>Create</button>
+        </form>
+
+    </div>
+</div>
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    // 🔥 AUTO LOGIN CHECK
+    let match = document.cookie.match(/(^| )user_id=([^;]+)/);
+
+    if (match) {
+        window.location.replace("autoLogin");
+        return;
+    }
+
+    // typing effect
+    const texts = [
+        "Track calories. Build discipline.",
+        "Log your weight. See real progress.",
+        "Stay consistent. Become unstoppable."
+    ];
+
+    let textIndex = 0, charIndex = 0, isDeleting = false;
+
+    function typeEffect() {
+        const el = document.getElementById("typing-text");
+        const text = texts[textIndex];
+
+        if (!isDeleting) {
+            el.innerHTML = text.substring(0, charIndex++);
+            if (charIndex > text.length) {
+                isDeleting = true;
+                return setTimeout(typeEffect, 1500);
+            }
+        } else {
+            el.innerHTML = text.substring(0, charIndex--);
+            if (charIndex < 0) {
+                isDeleting = false;
+                textIndex = (textIndex + 1) % texts.length;
+            }
+        }
+        setTimeout(typeEffect, isDeleting ? 20 : 50);
+    }
+
+    function showFeatures() {
+        document.querySelectorAll(".feature-box")
+            .forEach((b,i)=>setTimeout(()=>b.classList.add("show"), i*200));
+    }
+
+    // modal
+    window.openLogin = function() {
+        modal.classList.add("active");
+        loginForm.classList.remove("hidden");
+        signupForm.classList.add("hidden");
+
+        const err = document.getElementById("loginError");
+        if (err) err.remove();
+    }
+
+    window.openSignup = function() {
+        modal.classList.add("active");
+        signupForm.classList.remove("hidden");
+        loginForm.classList.add("hidden");
+    }
+
+    window.closeModal = function() {
+        modal.classList.remove("active");
+    }
+
+    window.onclick = e => { if(e.target.id==="modal") closeModal(); }
+
+    // 🔥 AJAX LOGIN
+    const loginFormEl = document.getElementById("loginForm");
+
+    loginFormEl.addEventListener("submit", function(e) {
+        e.preventDefault();
+
+        const oldError = document.getElementById("loginError");
+        if (oldError) oldError.remove();
+
+        const formData = new URLSearchParams(new FormData(loginFormEl));
+
+        fetch("login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: formData
+        })
+        .then(res => res.text())
+        .then(data => {
+
+            data = data.trim();
+
+            console.log("LOGIN RESPONSE:", JSON.stringify(data));
+
+            if (data.includes("SUCCESS")) {
+                window.location.replace("dashboard.html");
+
+            } else if (data.includes("SETUP")) {
+                window.location.replace("setup.html");
+
+            } else {
+                showError("Invalid username or password ❌");
+            }
+
+        })
+        .catch(() => {
+            showError("Something went wrong ❌");
+        });
+    });
+
+    // remove error on typing
+    document.querySelector("#loginForm input[name='password']")
+    .addEventListener("input", () => {
+        const err = document.getElementById("loginError");
+        if (err) err.remove();
+    });
+
+    function showError(msg) {
+        let errorBox = document.getElementById("loginError");
+
+        if (!errorBox) {
+            errorBox = document.createElement("div");
+            errorBox.id = "loginError";
+            errorBox.style.color = "#ff6b6b";
+            errorBox.style.marginTop = "10px";
+            errorBox.style.fontSize = "14px";
+
+            loginFormEl.appendChild(errorBox);
+        }
+
+        errorBox.innerText = msg;
+    }
+
+    // init
+    typeEffect();
+    showFeatures();
+    lucide.createIcons();
+
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("login") === "true") {
+        openLogin();
+    }
+
+});
+
+</script>
+
+</body>
+</html>
