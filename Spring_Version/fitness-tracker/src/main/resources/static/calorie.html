@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+    <title>Calorie Tracker</title>
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="dashboard_style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+.table {
+    color: #f5f5f5 !important;
+    background-color: transparent !important;
+}
+.table,
+.table > :not(caption) > * > * {
+    background-color: transparent !important;
+}
+.table thead {
+    background: rgba(255,255,255,0.05) !important;
+}
+.table thead th {
+    color: #bbb !important;
+    border: none !important;
+}
+.table tbody td,
+.table tbody td * {
+    color: #f5f5f5 !important;
+    font-weight: 500;
+}
+.table tbody td {
+    border-top: 1px solid rgba(255,255,255,0.08) !important;
+}
+.table tbody tr:hover {
+    background: rgba(255,140,66,0.08) !important;
+}
+.table .btn,
+.table .btn i {
+    color: #ff8c42 !important;
+}
+.table .btn:hover,
+.table .btn:hover i {
+    color: #ff1a1a !important;
+}
+.form-control {
+    background: rgba(255,255,255,0.05) !important;
+    border: 1px solid rgba(255,255,255,0.1) !important;
+    color: #f5f5f5 !important;
+}
+
+.form-control:focus {
+    border-color: #ff8c42 !important;
+    box-shadow: 0 0 8px rgba(255,140,66,0.3);
+}
+
+.form-control::placeholder {
+    color: #aaa;
+}
+
+.chart-container {
+    position: relative;
+    width: 100%;
+    height: 350px;
+}
+
+.chart-container canvas {
+    width: 100% !important;
+    height: 100% !important;
+}
+/* 🔥 NEW ROW ANIMATION */
+.row-enter {
+    opacity: 0;
+    transform: translateY(10px);
+    animation: rowFadeIn 0.4s ease forwards;
+}
+
+@keyframes rowFadeIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 🔥 DELETE ANIMATION */
+.row-exit {
+    opacity: 1;
+    transform: translateX(0);
+    animation: rowFadeOut 0.3s ease forwards;
+}
+
+@keyframes rowFadeOut {
+    to {
+        opacity: 0;
+        transform: translateX(40px);
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div style="height:1px;background: linear-gradient(to right,transparent,rgba(255,140,66,0.5),transparent);"></div>
+
+<div class="navbar">
+    <div class="logo">
+        <i data-lucide="activity"></i>
+        Fit<span>Track</span>
+    </div>
+
+    <div class="nav-buttons">
+        <a href="dashboard.html" class="nav-link">Dashboard</a>
+        <a href="about.html" class="nav-link">About</a>
+        <a href="contact.html" class="nav-link" style="color:#ff8c42;">Contact</a>
+
+        <div class="dropdown d-inline-block">
+            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                Features
+            </a>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="calorie.html">Calorie Tracker</a></li>
+                <li><a class="dropdown-item" href="weight.html">Weight Tracker</a></li>
+            </ul>
+        </div>
+
+        <div class="menu-container ms-3">
+
+            <div class="menu-icon" onclick="toggleMenu(event)">
+                ☰
+            </div>
+
+            <div id="profileDropdown" style="
+                display:none;
+                position:absolute;
+                top:55px;
+                right:0;
+                width:240px;
+                background: rgba(30,30,30,0.6);
+                backdrop-filter: blur(18px);
+                border-radius:14px;
+                padding:10px;
+                z-index:9999;
+                border:1px solid rgba(255,140,66,0.25);
+                box-shadow:
+                    0 10px 30px rgba(0,0,0,0.6),
+                    0 0 20px rgba(255,140,66,0.15),
+                    inset 0 0 10px rgba(255,140,66,0.05);
+            ">
+
+                <div style="display:flex;align-items:center;gap:10px;padding:12px;height:50px;overflow:hidden;">
+                    <img id="navProfilePic" src="default.png" style="width:36px;height:36px;border-radius:50%;object-fit:cover;">
+                    <span id="navUsername">User</span>
+                </div>
+
+                <div style="height:1px;background:rgba(255,255,255,0.1);"></div>
+
+                <a href="profile.html" style="padding:12px;color:#eee;text-decoration:none;">
+                    <i class="bi bi-person" style="color:#ff8c42;"></i> View Profile
+                </a>
+                <a href="logout" style="padding:12px;color:#ff6b6b;text-decoration:none;">
+                    <i class="bi bi-box-arrow-right" style="color:#ff8c42;"></i> Logout
+                </a>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="container mt-5 mb-5">
+
+    <div class="row g-4">
+
+        <div class="col-md-6">
+            <div class="card shadow p-4 h-100">
+
+                <h4 class="text-center mb-4">
+                    <i class="bi bi-plus-circle"></i> Add Entry
+                </h4>
+
+                <form id="calorieForm">
+                    <div class="mb-3">
+                        <label class="form-label">Food Item</label>
+                        <input type="text" name="food" class="form-control" required pattern="[A-Za-z\s]+" title="Only letters allowed">
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Calories</label>
+                        <input type="number" name="calories" class="form-control" required min="1">
+                    </div>
+
+                    <button class="btn btn-primary w-100 mt-2">
+                        <i class="bi bi-plus-circle"></i> Add Entry
+                    </button>
+                </form>
+
+                <div class="card p-3 mt-4 text-center">
+                    <h6 style="color:#aaa;">Daily Intake</h6>
+                    <h2 id="totalCalories">0 / -- kcal</h2>
+                    <p id="warningText" class="text-danger fw-bold mt-2" style="display:none;">
+                        <i class="bi bi-exclamation-triangle-fill"></i> Limit Exceeded!
+                    </p>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card shadow p-4 h-100 text-center">
+                <h4 class="mb-4">
+                    <i class="bi bi-fire"></i> Calorie Distribution
+                </h4>
+
+                <div class="chart-container">
+                    <canvas id="calorieChart"></canvas>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card p-3 shadow">
+                <h5 class="text-center mb-3">
+                    <i class="bi bi-clock-history"></i> Today's Entries
+                </h5>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Food</th>
+                            <th>Calories</th>
+                            <th>Time</th>
+                            <th>Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody id="calorieTable"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+function toggleMenu(event) {
+    event.stopPropagation();
+    const menu = document.getElementById("profileDropdown");
+
+    if (menu.classList.contains("show")) {
+        menu.classList.remove("show");
+        setTimeout(() => menu.style.display = "none", 200);
+    } else {
+        menu.style.display = "block";
+        setTimeout(() => menu.classList.add("show"), 10);
+    }
+}
+
+window.onclick = function(e) {
+    const menu = document.getElementById("profileDropdown");
+    if (!e.target.closest(".menu-container")) {
+        menu.classList.remove("show");
+        setTimeout(() => menu.style.display = "none", 200);
+    }
+};
+function loadNavbarProfile() {
+    fetch("getProfile", { credentials: "include" })
+    .then(res => res.json())
+    .then(data => {
+        document.getElementById("navUsername").innerText = data.username || "User";
+
+        let img = document.getElementById("navProfilePic");
+        if (data.profilePic && data.profilePic.trim() !== "") {
+            img.src = data.profilePic;
+            img.onerror = () => img.src = "default.png";
+        } else {
+            img.src = "default.png";
+        }
+    });
+}
+let chart;
+let previousTotal = 0;
+let targetCalories = 2200;
+
+function loadTargetCalories() {
+    fetch("getCalorieTarget")
+        .then(res => res.text())
+        .then(data => {
+            targetCalories = parseInt(data);
+            loadTotalCalories();
+        });
+}
+
+function animateValue(id, start, end, duration) {
+    let range = end - start;
+    let startTime = null;
+
+    function step(timestamp) {
+        if (!startTime) startTime = timestamp;
+        let progress = timestamp - startTime;
+        let value = start + (range * (progress / duration));
+
+        if (progress >= duration) value = end;
+
+        document.getElementById(id).innerText =
+            Math.floor(value) + " / " + targetCalories + " kcal";
+
+        if (progress < duration) requestAnimationFrame(step);
+    }
+
+    requestAnimationFrame(step);
+}
+
+function loadTotalCalories() {
+    fetch("getTotalCalories")
+        .then(res => res.text())
+        .then(data => {
+            let total = parseInt(data);
+
+            animateValue("totalCalories", previousTotal, total, 800);
+            previousTotal = total;
+
+            let warning = document.getElementById("warningText");
+
+            if (total > targetCalories) {
+                document.getElementById("totalCalories").style.color = "red";
+                warning.style.display = "block";
+            } else {
+                document.getElementById("totalCalories").style.color = "#ff8c42";
+                warning.style.display = "none";
+            }
+
+            updateChart(total);
+        });
+}
+
+/* 🔥 NEW SMOOTH FILL ANIMATION */
+function updateChart(consumed) {
+
+    let ctx = document.getElementById("calorieChart").getContext("2d");
+
+    if (!chart) {
+        chart = new Chart(ctx, {
+            type: "doughnut",
+            data: {
+                labels: ["Consumed", "Remaining"],
+                datasets: [{
+                    data: [0, targetCalories],
+                    backgroundColor: ["#ff8c42", "#2a2a2a"]
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: false
+            }
+        });
+    }
+
+    animateChart(consumed);
+}
+
+function animateChart(target) {
+
+    let start = 0;
+    let duration = 800;
+    let startTime = null;
+
+    function step(timestamp) {
+
+        if (!startTime) startTime = timestamp;
+        let progress = timestamp - startTime;
+
+        let value = Math.min((progress / duration) * target, target);
+
+        let remaining = Math.max(targetCalories - value, 0);
+
+        chart.data.datasets[0].data = [value, remaining];
+        chart.update();
+
+        if (progress < duration) {
+            requestAnimationFrame(step);
+        }
+    }
+
+    requestAnimationFrame(step);
+}
+
+function loadTable() {
+    fetch("getTodayCalories")
+        .then(res => res.json())
+        .then(data => {
+            let table = document.getElementById("calorieTable");
+            table.innerHTML = "";
+
+            data.slice().reverse().forEach(item => {
+                let row = `
+                    <tr>
+                        <td>${item.food}</td>
+                        <td>${item.calories}</td>
+                        <td>${item.time}</td>
+                        <td>
+                            <button onclick="deleteEntry(event, ${item.id})" class="btn btn-sm">
+                                <i class="bi bi-trash3 fs-5"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                let temp = document.createElement("tbody");
+                temp.innerHTML = row;
+
+                let newRow = temp.firstElementChild;
+                newRow.classList.add("row-enter");
+
+                table.prepend(newRow);
+            });
+        });
+}
+
+function deleteEntry(event, id) {
+
+    let button = event.currentTarget;
+    let row = button.closest("tr");
+
+    // 🔥 add exit animation
+    row.classList.add("row-exit");
+
+    // wait for animation before deleting
+    setTimeout(() => {
+
+        fetch("deleteCalorie", {
+            method: "POST",
+            headers: {"Content-Type":"application/x-www-form-urlencoded"},
+            body: "id=" + id
+        }).then(() => {
+            loadTotalCalories();
+            loadTable();
+        });
+
+    }, 300);
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+    loadTargetCalories();
+    loadNavbarProfile();
+    loadTable();
+
+    document.getElementById("calorieForm").addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        let food = document.querySelector('input[name="food"]').value;
+        let calories = document.querySelector('input[name="calories"]').value;
+
+        fetch("addCalorie", {
+            method: "POST",
+            headers: {"Content-Type":"application/x-www-form-urlencoded"},
+            body: "food=" + encodeURIComponent(food) + "&calories=" + encodeURIComponent(calories)
+        }).then(() => {
+            document.getElementById("calorieForm").reset();
+            loadTotalCalories();
+            loadTable();
+        });
+    });
+});
+</script>
+
+<script>
+lucide.createIcons();
+</script>
+
+</body>
+</html>

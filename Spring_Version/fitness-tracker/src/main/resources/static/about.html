@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<script src="https://unpkg.com/lucide@latest"></script>
+<title>About - Fitness Tracker</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+<link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
+
+<link rel="stylesheet" href="dashboard_style.css">
+
+<style>
+.card {
+    transition: all 0.3s ease;
+    border-radius: 16px;
+}
+.card:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 15px 40px rgba(255, 140, 66, 0.15);
+}
+
+.nav-link {
+    transition: all 0.3s ease;
+}
+.nav-link:hover {
+    color: #ff8c42 !important;
+    transform: translateY(-2px);
+}
+
+.logo {
+    transition: all 0.3s ease;
+}
+.logo:hover {
+    transform: scale(1.05);
+}
+
+/* 🔥 MISSION */
+.mission-box {
+    opacity: 0;
+    transform: translateY(50px) scale(0.95);
+    animation: missionEntry 1s ease forwards;
+    animation-delay: 0.3s;
+}
+
+@keyframes missionEntry {
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.mission-text {
+    position: relative;
+    overflow: hidden;
+    height: 120px;
+}
+
+.mission-message {
+    position: absolute;
+    width: 100%;
+    opacity: 0;
+    transform: translateX(100%);
+    transition: all 0.7s ease;
+    line-height: 1.6;
+}
+
+.mission-message.active {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.mission-message.exit-left {
+    transform: translateX(-100%);
+    opacity: 0;
+}
+</style>
+
+</head>
+
+<body>
+
+<!-- 🔥 NAVBAR TOP BORDER -->
+<div style="height:1px;background: linear-gradient(to right,transparent,rgba(255,140,66,0.5),transparent);"></div>
+
+<!-- 🔥 NAVBAR (UPDATED) -->
+<div class="navbar">
+    <div class="logo">
+        <i data-lucide="activity"></i>
+        Fit<span>Track</span>
+    </div>
+
+    <div class="nav-buttons">
+        <a href="dashboard.html" class="nav-link">Dashboard</a>
+        <a href="about.html" class="nav-link" style="color:#ff8c42;">About</a>
+        <a href="contact.html" class="nav-link">Contact</a>
+
+        <div class="dropdown d-inline-block">
+            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                Features
+            </a>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="calorie.html">Calorie Tracker</a></li>
+                <li><a class="dropdown-item" href="weight.html">Weight Tracker</a></li>
+            </ul>
+        </div>
+
+        <div class="menu-container ms-3">
+
+            <div class="menu-icon" onclick="toggleMenu(event)">
+                ☰
+            </div>
+
+            <div id="profileDropdown" style="
+                display:none;
+                position:absolute;
+                top:55px;
+                right:0;
+                width:240px;
+                background: rgba(30,30,30,0.6);
+                backdrop-filter: blur(18px);
+                border-radius:14px;
+                padding:10px;
+                z-index:9999;
+                border:1px solid rgba(255,140,66,0.25);
+                box-shadow:
+                    0 10px 30px rgba(0,0,0,0.6),
+                    0 0 20px rgba(255,140,66,0.15),
+                    inset 0 0 10px rgba(255,140,66,0.05);
+            ">
+
+                <div style="display:flex;align-items:center;gap:10px;padding:12px;height:50px;overflow:hidden;">
+                    <img id="navProfilePic" src="default.png" style="width:36px;height:36px;border-radius:50%;object-fit:cover;">
+                    <span id="navUsername">User</span>
+                </div>
+
+                <div style="height:1px;background:rgba(255,255,255,0.1);"></div>
+
+                <a href="profile.html" style="padding:12px;color:#eee;text-decoration:none;">
+                    <i class="bi bi-person" style="color:#ff8c42;"></i> View Profile
+                </a>
+
+                <a href="logout" style="padding:12px;color:#ff6b6b;text-decoration:none;">
+                    <i class="bi bi-box-arrow-right" style="color:#ff8c42;"></i> Logout
+                </a>
+
+            </div>
+        </div>
+    </div>
+</div>
+<!-- CONTENT -->
+<div class="container mt-5 mb-5">
+
+    <!-- HERO -->
+    <div class="text-center mb-5" data-aos="fade-up">
+        <h1 class="fw-bold">About Fit<span style="color:#ff8c42;">Track</span></h1>
+        <p class="text-secondary mt-3" style="max-width: 600px; margin:auto;">
+            A smart and simple way to track your fitness journey.  
+            Stay consistent, monitor progress, and achieve your goals.
+        </p>
+    </div>
+
+    <!-- FEATURES -->
+    <div class="row g-4 mb-5">
+
+        <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+            <div class="card p-4 text-center h-100">
+                <i class="bi bi-fire fs-1 mb-3" style="color:#ff8c42;"></i>
+                <h5>Calorie Tracking</h5>
+                <p class="text-secondary">
+                    Log your daily intake and stay within your calorie goals.
+                </p>
+            </div>
+        </div>
+
+        <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+            <div class="card p-4 text-center h-100">
+                <i class="bi bi-graph-up fs-1 mb-3" style="color:#ff8c42;"></i>
+                <h5>Progress Visualization</h5>
+                <p class="text-secondary">
+                    Interactive charts to help you understand your progress.
+                </p>
+            </div>
+        </div>
+
+        <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
+            <div class="card p-4 text-center h-100">
+                <i class="bi bi-speedometer2 fs-1 mb-3" style="color:#ff8c42;"></i>
+                <h5>Performance Insights</h5>
+                <p class="text-secondary">
+                    Get insights to improve your habits and stay consistent.
+                </p>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- 🔥 MISSION -->
+    <div class="card p-5 text-center mission-box" data-aos="fade-up" data-aos-delay="200">
+        <h3 class="mb-4">Our Mission</h3>
+
+        <div class="mission-text">
+
+            <p class="text-secondary mission-message active">
+                Fitness shouldn’t feel confusing or overwhelming.<br>
+                FitTrack simplifies everything so you can focus on consistency and real progress.
+            </p>
+
+            <p class="text-secondary mission-message">
+                Track your calories, monitor your weight,<br>
+                and clearly understand your journey without overthinking.
+            </p>
+
+            <p class="text-secondary mission-message">
+                Real transformation comes from small daily actions.<br>
+                We help you stay disciplined even when motivation disappears.
+            </p>
+
+            <p class="text-secondary mission-message">
+                This isn’t just about tracking numbers.<br>
+                It’s about building habits and becoming stronger mentally and physically.
+            </p>
+
+            <p class="text-secondary mission-message">
+                With FitTrack, you stay accountable every day,<br>
+                making sure your goals turn into actual results.
+            </p>
+
+        </div>
+    </div>
+
+</div>
+<script>
+// 🔥 DROPDOWN
+function toggleMenu(event) {
+    event.stopPropagation();
+    const menu = document.getElementById("profileDropdown");
+
+    if (menu.classList.contains("show")) {
+        menu.classList.remove("show");
+        setTimeout(() => menu.style.display = "none", 200);
+    } else {
+        menu.style.display = "block";
+        setTimeout(() => menu.classList.add("show"), 10);
+    }
+}
+
+window.onclick = function(e) {
+    const menu = document.getElementById("profileDropdown");
+    if (!e.target.closest(".menu-container")) {
+        menu.classList.remove("show");
+        setTimeout(() => menu.style.display = "none", 200);
+    }
+};
+
+// 🔥 PROFILE LOAD
+function loadNavbarProfile() {
+    fetch("getProfile", { credentials: "include" })
+    .then(res => res.json())
+    .then(data => {
+        document.getElementById("navUsername").innerText = data.username || "User";
+
+        let img = document.getElementById("navProfilePic");
+        if (data.profilePic && data.profilePic.trim() !== "") {
+            img.src = data.profilePic;
+            img.onerror = () => img.src = "default.png";
+        } else {
+            img.src = "default.png";
+        }
+    });
+}
+
+document.addEventListener("DOMContentLoaded", loadNavbarProfile);
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+
+<script>
+lucide.createIcons();
+
+AOS.init({
+    duration: 1000,
+    once: true
+});
+
+/* 🔥 SLIDER */
+const messages = document.querySelectorAll(".mission-message");
+let index = 0;
+
+setInterval(() => {
+
+    const current = messages[index];
+    current.classList.remove("active");
+    current.classList.add("exit-left");
+
+    setTimeout(() => {
+        current.classList.remove("exit-left");
+    }, 700);
+
+    index = (index + 1) % messages.length;
+
+    const next = messages[index];
+    next.classList.add("active");
+
+}, 3000);
+</script>
+
+</body>
+</html>

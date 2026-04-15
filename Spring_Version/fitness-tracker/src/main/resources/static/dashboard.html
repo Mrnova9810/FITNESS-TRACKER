@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Dashboard</title>
+
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<link rel="stylesheet" href="dashboard_style.css">
+</head>
+
+<body>
+<div style="
+    height:1px;
+    background: linear-gradient(
+        to right,
+        transparent,
+        rgba(255,140,66,0.5),
+        transparent
+    );
+"></div>
+<div class="navbar">
+    <div class="logo">
+        <i data-lucide="activity"></i>
+        Fit<span>Track</span>
+    </div>
+
+    <div class="nav-buttons">
+        <a href="#" class="nav-link">Dashboard</a>
+        <a href="about.html" class="nav-link">About</a>
+        <a href="contact.html" class="nav-link">Contact</a>
+        <div class="dropdown d-inline-block">
+    <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+        Features
+    </a>
+    <ul class="dropdown-menu">
+        <li><a class="dropdown-item" href="calorie.html">Calorie Tracker</a></li>
+        <li><a class="dropdown-item" href="weight.html">Weight Tracker</a></li>
+    </ul>
+</div>
+
+       <div class="menu-container ms-3">
+
+    <div class="menu-icon" onclick="toggleMenu(event)">
+        ☰
+    </div>
+
+    <div id="profileDropdown" style="
+    display: none;
+    position: absolute;
+    top: 55px;
+    right: 0;
+    width: 240px;
+
+    background: rgba(30,30,30,0.6);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+
+    border-radius: 14px;
+    padding: 10px;
+    z-index: 9999;
+
+    border: 1px solid rgba(255,140,66,0.25);
+
+    box-shadow:
+        0 10px 30px rgba(0,0,0,0.6),
+        0 0 20px rgba(255,140,66,0.15),
+        inset 0 0 10px rgba(255,140,66,0.05);
+">
+
+        <!-- 🔥 UPDATED USER INFO (ONLY CHANGE HERE) -->
+        <div style="
+            display:flex;
+            align-items:center;
+            gap:10px;
+            padding:12px;
+            height:50px;
+            overflow:hidden;
+        ">
+
+            <img id="navProfilePic" src="profileImages/default.png" style="
+                width:36px;
+                height:36px;
+                border-radius:50%;
+                object-fit:cover;
+                flex-shrink:0;
+            ">
+
+            <span id="navUsername" style="font-weight:500;">User</span>
+
+        </div>
+
+        <div style="height:1px;background:rgba(255,255,255,0.1);"></div>
+
+        <a href="profile.html" style="padding:12px;color:#eee;text-decoration:none;">
+    <i class="bi bi-person" style="color:#ff8c42;"></i> View Profile
+</a>
+
+<a href="logout" style="padding:12px;color:#ff6b6b;text-decoration:none;">
+    <i class="bi bi-box-arrow-right" style="color:#ff8c42;"></i> Logout
+</a>
+
+    </div>
+
+</div>
+    </div>
+</div>
+
+<div class="container mt-5 mb-5">
+
+    <div class="row g-4">
+        <div class="col-md-3">
+            <div class="card p-3 shadow text-center">
+                <h6>Today's Calories</h6>
+                <h3 id="todayCalories">0</h3>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card p-3 shadow text-center">
+                <h6>Remaining</h6>
+                <h3 id="remainingCalories">0</h3>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card p-3 shadow text-center">
+                <h6>Current Weight</h6>
+                <h3 id="currentWeight">--</h3>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card p-3 shadow text-center">
+                <h6>Weekly Change</h6>
+                <h3 id="weightChange">--</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4 g-4">
+        <div class="col-md-6">
+            <div class="card p-4 shadow">
+                <h5 class="text-center mb-3">Calorie Trend</h5>
+                <div style="height: 300px;">
+                    <canvas id="calorieTrendChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card p-4 shadow">
+                <h5 class="text-center mb-3">Weight Trend</h5>
+                <div style="height: 300px;">
+                    <canvas id="weightTrendChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card p-4 shadow">
+                <h5 class="mb-3">Insights</h5>
+                <ul id="insightsList" class="list-unstyled">
+                    <li>Loading insights...</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+
+//🔥 STEP 3: PROTECT DASHBOARD (ADD THIS BLOCK HERE)
+function getCookie(name) {
+ let cookies = document.cookie.split(";");
+
+ for (let c of cookies) {
+     let [key, value] = c.trim().split("=");
+     if (key === name) return value;
+ }
+ return null;
+}
+
+//🔒 CHECK LOGIN
+let userId = getCookie("user_id");
+
+if (!userId) {
+ window.location.href = "landingPage.html";
+}
+
+// 🔥 dynamic target
+let targetCalories = 0;
+
+function loadTargetCalories(callback) {
+    fetch("getCalorieTarget", { credentials: "include" })
+    .then(res => res.text())
+    .then(data => {
+        targetCalories = parseInt(data) || 0;
+        callback();
+    });
+}
+
+// 🔥 COUNT-UP ANIMATION
+function animateValue(id, start, end, duration) {
+    let range = end - start;
+    let startTime = null;
+
+    function step(timestamp) {
+        if (!startTime) startTime = timestamp;
+        let progress = timestamp - startTime;
+        let value = Math.min(start + (range * progress / duration), end);
+
+        document.getElementById(id).innerText = Math.floor(value);
+
+        if (progress < duration) requestAnimationFrame(step);
+    }
+
+    requestAnimationFrame(step);
+}
+
+// 🔥 DASHBOARD DATA
+function loadDashboard() {
+
+    fetch("getTotalCalories")
+    .then(res => res.text())
+    .then(data => {
+        let total = parseInt(data) || 0;
+
+        animateValue("todayCalories", 0, total, 800);
+        animateValue("remainingCalories", 0, Math.max(targetCalories - total, 0), 800);
+    });
+
+    // ✅ FIXED CURRENT WEIGHT
+    fetch("getCurrentWeight")
+    .then(res => res.text())
+    .then(data => {
+        let value = parseFloat(data);
+
+        if (!isNaN(value)) {
+            animateValue("currentWeight", 0, value, 800);
+        } else {
+            document.getElementById("currentWeight").innerText = "--";
+        }
+    });
+
+    // ✅ FIXED WEEKLY CHANGE
+    fetch("getWeightChange")
+    .then(res => res.text())
+    .then(data => {
+        let el = document.getElementById("weightChange");
+
+        setTimeout(() => {
+
+            if (data === "NA") {
+                el.innerHTML = `<i></i> --`;
+                return;
+            }
+
+            let change = parseFloat(data) || 0;
+
+         // 🔥 FIX DECIMAL ISSUE
+         change = Number(change.toFixed(1));
+
+         if (change > 0) {
+             el.innerHTML = `<i class="bi bi-arrow-up text-danger"></i> +${change} kg`;
+         } else if (change < 0) {
+             el.innerHTML = `<i class="bi bi-arrow-down text-success"></i> ${change} kg`;
+         } else {
+             el.innerHTML = `<i class="bi bi-dash-circle text-secondary"></i> 0 kg`;
+         }
+
+        }, 600);
+    });
+}
+
+// 🔥 GRAPHS
+let calorieChart, weightChartDash;
+
+function loadCalorieTrend() {
+    fetch("getCalorieTrend")
+    .then(res => res.json())
+    .then(data => {
+
+        let labels = data.map(d => d.date);
+        let values = data.map(d => d.calories);
+
+        let ctx = document.getElementById("calorieTrendChart").getContext("2d");
+
+        if (calorieChart) calorieChart.destroy();
+
+        let gradient = ctx.createLinearGradient(0, 0, 0, 300);
+        gradient.addColorStop(0, "#ff8c42");
+        gradient.addColorStop(1, "rgba(255,140,66,0.2)");
+
+        calorieChart = new Chart(ctx, {
+            type: "bar",
+            data: {
+                labels,
+                datasets: [{
+                    label: "Calories",
+                    data: values,
+                    backgroundColor: gradient,
+                    borderRadius: 8
+                }]
+            },
+            options: {
+            	options: {
+            	    responsive: true,
+            	    maintainAspectRatio: false,
+
+            	    animation: {
+            	        duration: 1200,
+            	        easing: "easeOutQuart"
+            	    },
+
+            	    plugins: {
+            	        legend: { display: false }
+            	    },
+
+            	    scales: {
+            	        y: {
+            	            beginAtZero: true
+            	        }
+            	    }
+            	}
+            }
+        });
+    });
+}
+
+function loadWeightTrend() {
+    fetch("getWeightData")
+    .then(res => res.json())
+    .then(data => {
+
+        let labels = data.map(d => d.date);
+        let values = data.map(d => d.weight);
+
+        let ctx = document.getElementById("weightTrendChart").getContext("2d");
+
+        if (weightChartDash) weightChartDash.destroy();
+
+        weightChartDash = new Chart(ctx, {
+            type: "line",
+            data: {
+                labels,
+                datasets: [{
+                    label: "Weight",
+                    data: values,
+                    borderColor: "#ff8c42",
+                    tension: 0.4,
+                    fill: false
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+
+                animation: {
+                    duration: 1400,
+                    easing: "easeOutQuart",
+                    delay: (ctx) => ctx.dataIndex * 100
+                },
+
+                elements: {
+                    line: {
+                        borderWidth: 3
+                    },
+                    point: {
+                        radius: 4,
+                        hoverRadius: 6
+                    }
+                }
+            }
+        });
+    });
+}
+
+// 🔥 INSIGHTS (FIXED)
+function loadInsights() {
+
+    let insights = [];
+    let loaded = 0;
+
+    function checkDone() {
+        loaded++;
+        if (loaded === 2) updateInsights(insights);
+    }
+
+    fetch("getTotalCalories")
+    .then(res => res.text())
+    .then(data => {
+
+        let total = parseInt(data) || 0;
+
+        if (total > targetCalories)
+            insights.push(`<i class="bi bi-exclamation-triangle text-danger"></i> Exceeded calorie limit`);
+        else if (total > targetCalories * 0.7)
+            insights.push(`<i class="bi bi-check-circle text-success"></i> Close to goal`);
+        else
+            insights.push(`<i class="bi bi-info-circle text-primary"></i> Can consume more calories`);
+
+        checkDone();
+    });
+
+    fetch("getWeightChange")
+    .then(res => res.text())
+    .then(data => {
+
+        if (data === "NA") {
+            insights.push(`<i class="bi bi-info-circle text-primary"></i> First weight entry recorded`);
+        } else {
+            let change = parseFloat(data) || 0;
+
+            if (change > 0)
+                insights.push(`<i class="bi bi-arrow-up text-danger"></i> Weight increased`);
+            else if (change < 0)
+                insights.push(`<i class="bi bi-arrow-down text-success"></i> Weight decreased`);
+            else
+                insights.push(`<i class="bi bi-dash-circle text-secondary"></i> Weight stable`);
+        }
+
+        checkDone();
+    });
+}
+
+function updateInsights(insights) {
+    let ul = document.getElementById("insightsList");
+    ul.innerHTML = "";
+
+    insights.forEach((i, index) => {
+        setTimeout(() => {
+            ul.innerHTML += `<li class="mb-2 d-flex align-items-center gap-2">${i}</li>`;
+        }, index * 200);
+    });
+}
+
+/* =====================================================
+   🔥 NEW CODE (DO NOT REMOVE EXISTING LOGIC)
+===================================================== */
+
+// ✅ DROPDOWN TOGGLE
+// ✅ DROPDOWN TOGGLE
+function toggleMenu(event) {
+    event.stopPropagation();
+
+    const menu = document.getElementById("profileDropdown");
+
+    if (menu.classList.contains("show")) {
+        menu.classList.remove("show");
+
+        setTimeout(() => {
+            menu.style.display = "none";
+        }, 200);
+
+    } else {
+        menu.style.display = "block";
+
+        setTimeout(() => {
+            menu.classList.add("show");
+        }, 10);
+    }
+}
+
+window.onclick = function(e) {
+    const menu = document.getElementById("profileDropdown");
+
+    if (!e.target.closest(".menu-container")) {
+        menu.classList.remove("show");
+
+        setTimeout(() => {
+            menu.style.display = "none";
+        }, 200);
+    }
+};
+// ✅ LOAD PROFILE DATA INTO NAVBAR
+function loadNavbarProfile() {
+    fetch("getProfile", { credentials: "include" })
+    .then(res => res.json())
+    .then(data => {
+
+        // username
+        if (document.getElementById("navUsername")) {
+            document.getElementById("navUsername").innerText = data.username || "User";
+        }
+
+        // profile pic
+        if (document.getElementById("navProfilePic")) {
+        	// 🔥 SAFE IMAGE LOAD (prevents breaking UI)
+        	if (data.profilePic && data.profilePic.trim() !== "") {
+        	    let img = document.getElementById("navProfilePic");
+
+        	    img.src = data.profilePic;
+
+        	    // fallback if image fails
+        	    img.onerror = function () {
+        	        this.src = "profileImages/default.png";
+        	    };
+
+        	} else {
+        	    document.getElementById("navProfilePic").src = "profileImages/default.png";
+        	}
+        }
+    })
+    .catch(err => console.log("Profile load error:", err));
+}
+
+/* ===================================================== */
+
+// 🔥 LOAD
+document.addEventListener("DOMContentLoaded", function () {
+
+    // ✅ NEW (navbar)
+    loadNavbarProfile();
+
+    loadTargetCalories(() => {
+        loadDashboard();
+        loadInsights();
+    });
+
+    loadCalorieTrend();
+    loadWeightTrend();
+});
+
+</script>
+
+<script>
+lucide.createIcons();
+</script>
+
+</body>
+</html>
