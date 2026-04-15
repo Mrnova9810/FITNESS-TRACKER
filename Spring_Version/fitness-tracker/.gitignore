@@ -33,5 +33,6 @@ build/
 .vscode/
 # 🔐 Secrets (DO NOT PUSH)
 application-secret.properties
+.idea/
 
 
