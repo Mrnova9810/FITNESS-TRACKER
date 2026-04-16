@@ -28,7 +28,10 @@ public class GetWeightHistoryController {
             Connection con = DBConnection.getConnection();
 
             PreparedStatement ps = con.prepareStatement(
-                    "SELECT id, date, weight FROM weight WHERE user_id=? ORDER BY date DESC"
+                    "SELECT id, date, weight\n" +
+                            "FROM weight\n" +
+                            "WHERE user_id = ?\n" +
+                            "ORDER BY date DESC"
             );
 
             ps.setInt(1, userId);

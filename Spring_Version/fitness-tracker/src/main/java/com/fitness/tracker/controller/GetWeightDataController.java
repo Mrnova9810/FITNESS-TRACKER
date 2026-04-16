@@ -29,7 +29,10 @@ public class GetWeightDataController {
             Connection con = DBConnection.getConnection();
 
             PreparedStatement ps = con.prepareStatement(
-                    "SELECT date, weight FROM weight WHERE user_id=? ORDER BY date"
+                    "SELECT \"date\", weight\n" +
+                            "FROM weight\n" +
+                            "WHERE user_id = ?\n" +
+                            "ORDER BY \"date\""
             );
 
             ps.setInt(1, userId);

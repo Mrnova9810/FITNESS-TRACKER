@@ -28,9 +28,12 @@ public class GetCalorieTrendController {
             Connection con = DBConnection.getConnection();
 
             PreparedStatement ps = con.prepareStatement(
-                    "SELECT DATE(time) as day, SUM(calories) as total " +
-                            "FROM calories WHERE user_id=? " +
-                            "GROUP BY DATE(time) ORDER BY day ASC LIMIT 7"
+                    "SELECT DATE(time) as day, SUM(calories) as total\n" +
+                            "FROM calories \n" +
+                            "WHERE user_id=? \n" +
+                            "GROUP BY DATE(time) \n" +
+                            "ORDER BY day ASC \n" +
+                            "LIMIT 7"
             );
 
             ps.setInt(1, userId);

@@ -44,7 +44,7 @@ public class CalorieService {
 
             // 2. Days difference
             checkDays = con.prepareStatement(
-                    "SELECT DATEDIFF(CURDATE(), ?) AS days"
+                    "SELECT CURRENT_DATE - ?::date AS days"
             );
             checkDays.setTimestamp(1, lastUpdated);
 
@@ -57,7 +57,10 @@ public class CalorieService {
 
             // 3. Weight week 2
             w2Ps = con.prepareStatement(
-                    "SELECT AVG(weight) FROM weight WHERE user_id=? AND date >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)"
+                    "SELECT AVG(weight)\n" +
+                            "FROM weight\n" +
+                            "WHERE user_id = ?\n" +
+                            "AND date >= CURRENT_DATE - INTERVAL '7 days'"
             );
             w2Ps.setInt(1, userId);
 
@@ -67,7 +70,11 @@ public class CalorieService {
 
             // 4. Weight week 1
             w1Ps = con.prepareStatement(
-                    "SELECT AVG(weight) FROM weight WHERE user_id=? AND date BETWEEN DATE_SUB(CURDATE(), INTERVAL 14 DAY) AND DATE_SUB(CURDATE(), INTERVAL 7 DAY)"
+                    "SELECT AVG(weight)\n" +
+                            "FROM weight\n" +
+                            "WHERE user_id = ?\n" +
+                            "AND date BETWEEN CURRENT_DATE - INTERVAL '14 days'\n" +
+                            "             AND CURRENT_DATE - INTERVAL '7 days'"
             );
             w1Ps.setInt(1, userId);
 
@@ -91,7 +98,10 @@ public class CalorieService {
 
             // 8. Update DB
             updatePs = con.prepareStatement(
-                    "UPDATE user_stats SET calorie_target=?, last_updated=CURDATE() WHERE user_id=?"
+                    "UPDATE user_stats\n" +
+                            "SET calorie_target = ?,\n" +
+                            "    last_updated = CURRENT_DATE\n" +
+                            "WHERE user_id = ?"
             );
 
             updatePs.setInt(1, newCalories);
@@ -150,10 +160,15 @@ public class CalorieService {
         try (Connection con = DBConnection.getConnection()) {
 
             PreparedStatement ps = con.prepareStatement(
-                    "SELECT up.age, up.height, up.goal, up.gender, up.activity_level, us.current_weight " +
-                            "FROM user_profile up " +
-                            "JOIN user_stats us ON up.user_id = us.user_id " +
-                            "WHERE up.user_id=?"
+                    "SELECT up.age,\n" +
+                            "       up.height,\n" +
+                            "       up.goal,\n" +
+                            "       up.gender,\n" +
+                            "       up.activity_level,\n" +
+                            "       us.current_weight\n" +
+                            "FROM user_profile up\n" +
+                            "JOIN user_stats us ON up.user_id = us.user_id\n" +
+                            "WHERE up.user_id = ?"
             );
 
             ps.setInt(1, userId);
@@ -197,7 +212,11 @@ public class CalorieService {
 
             // 🔥 UPDATE BOTH calorie_target + tdee
             PreparedStatement update = con.prepareStatement(
-                    "UPDATE user_stats SET calorie_target=?, tdee=?, last_updated=CURDATE() WHERE user_id=?"
+                    "UPDATE user_stats\n" +
+                            "SET calorie_target = ?,\n" +
+                            "    tdee = ?,\n" +
+                            "    last_updated = CURRENT_DATE\n" +
+                            "WHERE user_id = ?"
             );
 
             update.setInt(1, calories);
@@ -206,9 +225,9 @@ public class CalorieService {
 
             update.executeUpdate();
             // check calories update in profile in terminal.
-//            System.out.println("userId:" + userId);
-//            System.out.println("goal : " + goal);
-//            System.out.println("profile change due to Recalculate : " + calories);
+            System.out.println("userId:" + userId);
+            System.out.println("goal : " + goal);
+            System.out.println("profile change due to Recalculate : " + calories);
 
         } catch (Exception e) {
             e.printStackTrace();

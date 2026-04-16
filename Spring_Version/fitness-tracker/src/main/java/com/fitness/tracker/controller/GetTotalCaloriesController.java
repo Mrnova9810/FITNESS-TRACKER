@@ -27,7 +27,10 @@ public class GetTotalCaloriesController {
             Connection con = DBConnection.getConnection();
 
             PreparedStatement ps = con.prepareStatement(
-                    "SELECT SUM(calories) FROM calories WHERE user_id=? AND DATE(time)=CURDATE()"
+                    "SELECT SUM(calories)\n" +
+                            "FROM calories\n" +
+                            "WHERE user_id = ?\n" +
+                            "AND time::date = CURRENT_DATE"
             );
 
             ps.setInt(1, userId);

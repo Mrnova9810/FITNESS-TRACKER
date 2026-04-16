@@ -27,7 +27,9 @@ public class AddWeightController {
 
             // 🔍 Check if today's entry exists
             PreparedStatement check = con.prepareStatement(
-                    "SELECT id FROM weight WHERE user_id=? AND `date`=CURDATE()"
+                    "SELECT id \n" +
+                            "FROM weight \n" +
+                            "WHERE user_id = ? AND date = CURRENT_DATE"
             );
             check.setInt(1, userId);
 
@@ -36,7 +38,7 @@ public class AddWeightController {
             if (rs.next()) {
                 // 🔄 UPDATE
                 PreparedStatement update = con.prepareStatement(
-                        "UPDATE weight SET weight=? WHERE user_id=? AND `date`=CURDATE()"
+                        "UPDATE weight SET weight=? WHERE user_id=? AND date= CURRENT_DATE"
                 );
                 update.setDouble(1, weight);
                 update.setInt(2, userId);
@@ -45,7 +47,7 @@ public class AddWeightController {
             } else {
                 // ➕ INSERT
                 PreparedStatement insert = con.prepareStatement(
-                        "INSERT INTO weight(user_id, weight, `date`) VALUES (?, ?, CURDATE())"
+                        "INSERT INTO weight(user_id, weight, date ) VALUES (?, ?, CURRENT_DATE)"
                 );
                 insert.setInt(1, userId);
                 insert.setDouble(2, weight);

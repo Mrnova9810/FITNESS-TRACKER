@@ -25,7 +25,8 @@ public class AddCalorieController {
             Connection con = DBConnection.getConnection();
 
             PreparedStatement ps = con.prepareStatement(
-                    "INSERT INTO calories(user_id, food, calories, time) VALUES (?, ?, ?, NOW())"
+                    "INSERT INTO calories(user_id, food, calories, time) \n" +
+                            "VALUES (?, ?, ?, CURRENT_TIMESTAMP)"
             );
 
             ps.setInt(1, userId); // 🔥 TEMP user_id

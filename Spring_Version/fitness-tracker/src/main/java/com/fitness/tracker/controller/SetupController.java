@@ -86,7 +86,8 @@ public class SetupController {
 
             // 🔹 Insert stats
             PreparedStatement ps2 = conn.prepareStatement(
-                    "INSERT INTO user_stats (user_id, current_weight, calorie_target, tdee, last_updated) VALUES (?, ?, ?, ?, CURDATE())"
+                    "INSERT INTO user_stats (user_id, current_weight, calorie_target, tdee, last_updated)\n" +
+                            "VALUES (?, ?, ?, ?, CURRENT_DATE)"
             );
             ps2.setInt(1, userId);
             ps2.setDouble(2, weight);
@@ -96,7 +97,8 @@ public class SetupController {
 
             // 🔹 Insert weight
             PreparedStatement ps3 = conn.prepareStatement(
-                    "INSERT INTO weight (user_id, weight, date) VALUES (?, ?, CURDATE())"
+                    "INSERT INTO weight (user_id, weight, date)\n" +
+                            "VALUES (?, ?, CURRENT_DATE)"
             );
             ps3.setInt(1, userId);
             ps3.setDouble(2, weight);

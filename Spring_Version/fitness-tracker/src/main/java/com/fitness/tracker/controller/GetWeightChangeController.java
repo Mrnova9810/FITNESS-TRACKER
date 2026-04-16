@@ -25,7 +25,11 @@ public class GetWeightChangeController {
             Connection con = DBConnection.getConnection();
 
             PreparedStatement ps = con.prepareStatement(
-                    "SELECT weight FROM weight WHERE user_id=? ORDER BY date DESC LIMIT 2"
+                    "SELECT weight\n" +
+                            "FROM weight\n" +
+                            "WHERE user_id = ?\n" +
+                            "ORDER BY \"date\" DESC\n" +
+                            "LIMIT 2"
             );
 
             ps.setInt(1, userId);

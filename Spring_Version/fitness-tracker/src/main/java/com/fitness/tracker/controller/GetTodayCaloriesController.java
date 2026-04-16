@@ -28,8 +28,10 @@ public class GetTodayCaloriesController {
             Connection con = DBConnection.getConnection();
 
             PreparedStatement ps = con.prepareStatement(
-                    "SELECT id, food, calories, TIME(time) as time " +
-                            "FROM calories WHERE user_id=? AND DATE(time)=CURDATE() " +
+                    "SELECT id, food, calories, time::time AS time\n" +
+                            "FROM calories\n" +
+                            "WHERE user_id = ?\n" +
+                            "AND time::date = CURRENT_DATE\n" +
                             "ORDER BY time DESC"
             );
 
